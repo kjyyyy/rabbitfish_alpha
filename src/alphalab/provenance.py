@@ -8,9 +8,8 @@ beat v0.4?" unanswerable except by reading committed markdown by hand.
 from __future__ import annotations
 
 import subprocess
+from importlib.metadata import PackageNotFoundError, version as pkg_version
 from pathlib import Path
-
-from . import __version__
 
 
 def git_sha(short: bool = False) -> str:
@@ -28,7 +27,11 @@ def git_sha(short: bool = False) -> str:
 
 
 def version() -> str:
-    return __version__
+    try:
+        return pkg_version("alphalab")
+    except PackageNotFoundError:
+        from . import __version__
+        return __version__
 
 
 def stamp() -> dict:

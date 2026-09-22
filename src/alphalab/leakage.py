@@ -57,21 +57,29 @@ def numerical_checks(values: pd.Series | pd.DataFrame, max_invalid_ratio: float 
     - invalid (NaN/inf) or extreme-value ratio above 30%
     - too few names covered per day
     - near-constant cross-sections (no information to rank on)"""
-    v = values.stack() if isinstance(values, pd.DataFrame) else values
-    v = v.replace([np.inf, -np.inf], np.nan)
-    n = len(v)
+    # Do not use DataFrame.stack() for the invalid ratio: on pandas 2.x the default
+    # stack drops NaNs, so a mostly-missing factor looks clean.
+    if isinstance(values, pd.DataFrame):
+        frame = values.replace([np.inf, -np.inf], np.nan)
+        flat = frame.to_numpy().ravel()
+        by_date = frame
+    else:
+        series = values.replace([np.inf, -np.inf], np.nan)
+        flat = series.to_numpy()
+        by_date = series.unstack()
+    n = flat.size
     if n == 0:
         return False, "empty"
-    invalid = float(v.isna().mean())
-    finite = v.dropna()
-    if finite.empty:
+    invalid = float(np.isnan(flat).mean())
+    finite = flat[~np.isnan(flat)]
+    if finite.size == 0:
         return False, "all values invalid"
-    q1, q99 = finite.quantile([0.01, 0.99])
+    q1, q99 = np.quantile(finite, [0.01, 0.99])
     spread = q99 - q1
-    extreme = float(((finite - finite.median()).abs() > 1e6 * max(abs(spread), 1e-12)).mean())
+    med = float(np.median(finite))
+    extreme = float((np.abs(finite - med) > 1e6 * max(abs(spread), 1e-12)).mean())
     if invalid + extreme > max_invalid_ratio:
         return False, f"invalid+extreme ratio {invalid + extreme:.2f} > {max_invalid_ratio}"
-    by_date = (values if isinstance(values, pd.DataFrame) else values.unstack())
     present = by_date.notna().sum(axis=1)
     cover = present / max(float(present.max()), 1.0)   # relative to the fullest day
     if float(cover.mean()) < min_coverage:
