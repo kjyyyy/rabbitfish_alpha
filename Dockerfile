@@ -32,7 +32,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 WORKDIR /build
 
 # Dependency layer: copy only what the metadata needs, plus a stub package so
-# `pip install -e .` resolves. Editing src/ does NOT invalidate this layer.
+# `pip install .` resolves. Editing src/ does NOT invalidate this layer.
 COPY pyproject.toml README.md ./
 RUN mkdir -p src/alphalab && touch src/alphalab/__init__.py
 # constraints.txt pins the full transitive tree (see `make lock`). Without it
@@ -40,14 +40,15 @@ RUN mkdir -p src/alphalab && touch src/alphalab/__init__.py
 COPY constraints.tx[t] ./
 RUN pip install -U pip setuptools wheel \
     && if [ -f constraints.txt ]; then \
-         pip install -e ".[qlib,llm,postgres]" -c constraints.txt ; \
+         pip install ".[qlib,llm,postgres]" -c constraints.txt ; \
        else \
-         pip install -e ".[qlib,llm,postgres]" ; \
+         pip install ".[qlib,llm,postgres]" ; \
        fi
 
-# Source layer: cheap to rebuild.
+# Source layer: cheap to rebuild. Non-editable install so /opt/venv works when
+# copied to runtime (editable installs point at /build, which is not in the image).
 COPY src/ ./src/
-RUN pip install --no-deps -e .
+RUN pip install --no-deps .
 
 # ---------------------------------------------------------------- runtime ----
 FROM python:3.11.9-slim-bookworm AS runtime
