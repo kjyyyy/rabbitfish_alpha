@@ -35,30 +35,88 @@ A review of the 2024–26 alpha-mining literature (`docs/research/03-llm-alpha-m
 
 So agents sit upstream and gates sit downstream. See `docs/architecture.md`.
 
+## CLI first, dashboard second
+
+**Harvesting runs in the terminal.** `alphalab discover`, `model`, `cycle`, `forward publish`, and
+the rest are CLI commands. They write the research record under `runs/<config-name>/` and into
+`runs/alphalab.db`.
+
+**The dashboard is a read-mostly viewer** on that record (`pip install -e ".[web]"` then
+`alphalab serve`). It does **not** start discovery or change gates — that is deliberate: a UI that
+could re-run until something clears Deflated Sharpe would be a p-hacking console. From the browser
+you can **pre-register a hypothesis** and **upload CSVs** (audit, or ingest); everything that
+advances the pipeline stays a CLI decision you make and the ledger records.
+
+Product walk and gaps (empty pages, config traps): [`docs/ux-product-fit-gap.md`](docs/ux-product-fit-gap.md).
+Stage-by-stage science: [`HARVESTING.md`](HARVESTING.md).
+
 ## Quick start
+
+### 1. Install and init
 
 ```bash
 git clone <your-repo-url> alpha-lab && cd alpha-lab
 python -m venv .venv && source .venv/bin/activate      # Windows: use WSL, or .venv\Scripts\activate
-pip install -e ".[qlib,llm,dev]"        # or: make setup
-alphalab init                                          # writes a git-ignored .env; --stack ollama|vllm|anthropic
+pip install -e ".[qlib,llm,dev,web]"                   # add web for the dashboard; or: make setup
+alphalab init --stack mock                             # or ollama|vllm|anthropic — writes .env + picks a config
 make db                                                # alembic upgrade + status
-alphalab doctor                                        # data, keys, database, migrations, model endpoints
+alphalab doctor -c configs/local_offline.yaml          # data, keys, database, migrations, model endpoints
 pytest -q                                              # 206 unit tests, no data, network or model needed
-alphalab download-cn                                   # ~570 MB Qlib community dataset, or `alphalab ingest` (below)
-alphalab sanity                                        # oracle wins, random loses the cost drag, stale has no edge
-alphalab discover                                      # stage 1: screen -> evaluate -> GP refine -> gate
-alphalab model                                         # stage 2: walk-forward variants + validity cards
-alphalab portfolio-trial --capital 1000000             # portfolio construction ladder + capacity
-alphalab journal                                       # ledger/library summary
-alphalab validate                                      # CPCV, overfitting factor, log-wealth, decay, costs
-alphalab audit                                         # how much "alpha" is evaluation convention?
-alphalab register                                      # assumption register for this config
-alphalab hierarchy                                     # family-level testing (cuts effective N)
-alphalab revalidate                                    # recheck the library on data it wasn't discovered on
-alphalab serve                                         # read-only dashboard on http://127.0.0.1:8000
-alphalab cycle -n 15                                   # the whole loop in one command
 ```
+
+Pick one config for the whole session and pass **`-c`** on every command (and on `serve`). Examples:
+`configs/cn_csi300.yaml` (default CN), `configs/local_offline.yaml` (mock LLM), or a file from
+`alphalab ingest --write-config`.
+
+### 2. Market data (required before discover)
+
+```bash
+# Option A — free CSI-300 test bed (~570 MB download)
+alphalab download-cn -c configs/cn_csi300.yaml
+
+# Option B — your own OHLCV CSVs (no download; see "Your own data" below)
+alphalab ingest --csv ~/prices --write-config configs/mine.yaml
+alphalab doctor -c configs/mine.yaml
+```
+
+`make offline` uses mock LLMs but **still needs** market data (usually `data/cn_data` from
+`download-cn`). Mock is not a substitute for prices.
+
+### 3. Harvest (CLI)
+
+Use the **same `-c`** as your data config throughout.
+
+```bash
+export CFG=configs/local_offline.yaml   # or cn_csi300.yaml, configs/mine.yaml, …
+
+alphalab sanity -c $CFG
+alphalab discover -c $CFG               # stage 1: screen → evaluate → GP refine → gate
+alphalab model -c $CFG                  # stage 2: walk-forward variants + validity cards
+alphalab audit -c $CFG                  # how much "alpha" is evaluation convention?
+alphalab hierarchy -c $CFG              # family-level testing (cuts effective N)
+alphalab revalidate -c $CFG             # recheck library on data it was not discovered on
+alphalab validate -c $CFG               # CPCV, overfitting factor, log-wealth, decay, costs
+alphalab portfolio-trial -c $CFG --capital 1000000
+alphalab forward publish -c $CFG      # pre-register signals before the horizon elapses
+alphalab journal -c $CFG
+```
+
+One closed loop (optional LLM proposals): `alphalab cycle -c $CFG -n 15` (use `-n 0` to skip the
+LLM arm). Shorthand for a mock CN pass: `make offline` (after `download-cn` and with
+`local_offline` config).
+
+### 4. View results (dashboard)
+
+Start the server **with the same config name** you harvested — artefacts live in
+`runs/<config.name>/`.
+
+```bash
+alphalab serve -c $CFG                  # http://127.0.0.1:8000, read-only
+```
+
+If Loop, Search, or Library look empty while Runs shows trials, you are usually on the wrong
+`-c`, or nothing has passed the gates yet (rejects appear on the run detail page). See
+[`docs/ux-product-fit-gap.md`](docs/ux-product-fit-gap.md).
 
 ### Your own data
 
@@ -99,7 +157,8 @@ missing and the command that fixes it.
 ### Running it entirely locally
 
 ```bash
-make offline          # whole suite: mock model, no network, no API key
+alphalab download-cn -c configs/local_offline.yaml   # required once; mock does not supply prices
+make offline          # mock LLM, no API key: sanity → discover → model → audit → journal
 make up               # optional: postgres + ollama containers
 alphalab llm-check -c configs/local_ollama.yaml   # or configs/local_vllm.yaml (GPU)
 ```
@@ -256,8 +315,12 @@ free, which is the one structural advantage a small book has (`docs/institutiona
 ## The dashboard
 
 ```bash
-pip install -e ".[web]" && alphalab serve      # http://127.0.0.1:8000, read-only
+pip install -e ".[web]" && alphalab serve -c configs/cn_csi300.yaml   # same -c as your harvest
 ```
+
+**It does not replace the CLI.** Opening `http://127.0.0.1:8000` without running discover/model
+first shows empty harvest pages; that is normal. Run the pipeline in section 3, then serve with
+matching `-c`.
 
 Ten pages over the same data the CLI uses — nothing is recomputed, so the screen cannot disagree
 with the ledger. Four of them exist to close the loop rather than report it:
