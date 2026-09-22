@@ -18,6 +18,7 @@ indistinguishable from a decision made after seeing the result.
 """
 from __future__ import annotations
 
+import datetime as dt
 import json
 
 import numpy as np
@@ -97,7 +98,9 @@ def run(cfg: Config, log=print) -> dict:
                promoted=[r["name"] for r in rows if r["was"] != r["now"] == "active"],
                retired=[r["name"] for r in rows if r["was"] != r["now"] == "retired"],
                unchanged=sum(1 for r in rows if r["was"] == r["now"]),
-               factors=rows)
+               factors=rows,
+               library_sha=lib.state_sha(),
+               generated_at=dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"))
     (cfg.run_dir / "revalidation.json").write_text(json.dumps(out, indent=2, default=float))
     log(df.to_string(index=False, float_format=lambda v: f"{v:.2f}"))
     log(f"\n{len(rows)} factors rechecked over {len(recent)} sessions from {start}: "

@@ -1,6 +1,11 @@
 {% extends "base.html" %}{% from "_macros.html" import tools, statuspill, empty %}
 {% block body %}
 <h2>What is blocking each factor</h2>
+{% if revalidation.stale %}
+<p class="note" style="border-left:3px solid var(--pico-del-color);padding-left:1rem">
+<strong>Stale revalidation artefact.</strong> {{ revalidation.reason }} Recheck t-stats from the
+old file are hidden; run <code>alphalab revalidate</code> or <code>alphalab repair --apply</code>.</p>
+{% endif %}
 <p class="note">The stage each library factor has reached, and the <strong>one gate</strong> it is
 waiting on, with what it has against what it needs. This is the page that makes the lab a loop
 rather than a log: promotion requires two consecutive rechecks on new data, and a claim above

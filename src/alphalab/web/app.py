@@ -20,6 +20,7 @@ from urllib.parse import quote
 
 from ..config import Config
 from ..provenance import stamp
+from . import artefacts
 from . import gates as G
 from . import glossary as GL
 from . import queries as Q
@@ -191,7 +192,10 @@ def create_app(cfg: Config):
 
     @app.get("/loop", response_class=HTMLResponse)
     def p_loop(request: Request):
-        return page(request, "loop.html", rows=Q.loop(cfg), forward=Q.forward(cfg))
+        lib = artefacts.read(cfg, "library", default={}) or {}
+        reval = artefacts.read(cfg, "revalidation", default={}) or {}
+        return page(request, "loop.html", rows=Q.loop(cfg), forward=Q.forward(cfg),
+                    revalidation=Q._revalidation_stale(cfg, None, lib, reval))
 
     @app.get("/search", response_class=HTMLResponse)
     def p_search(request: Request):

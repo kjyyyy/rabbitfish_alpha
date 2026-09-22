@@ -65,7 +65,7 @@ def main(argv=None):
     sub.add_parser("register", help="write the assumption register for this config")
     sub.add_parser("llm-check", help="verify the LLM endpoints (Ollama / vLLM / Anthropic) work")
     db = sub.add_parser("db", help="database: upgrade | status | import-csv")
-    db.add_argument("action", choices=["upgrade", "status", "import-csv", "verify"])
+    db.add_argument("action", choices=["upgrade", "status", "import-csv", "verify", "sync-library"])
     ex = sub.add_parser("exception", help="log a deviation from the standard protocol")
     ex.add_argument("--kind", required=True, help="e.g. filter, exclusion, special-handling")
     ex.add_argument("--scope", required=True, help="what it applies to")
@@ -74,6 +74,9 @@ def main(argv=None):
     sub.add_parser("validate", help="CPCV, overfitting factor, log-wealth, decay and cost sweep")
     sub.add_parser("revalidate", help="recheck the library on data it was not discovered on "
                                       "(promote, retire)")
+    rp = sub.add_parser("repair", help="reconcile ledger schema, library duplicates, and stale "
+                                       "revalidation artefacts")
+    rp.add_argument("--apply", action="store_true", help="write fixes (default is dry-run)")
     sub.add_parser("hierarchy", help="family-level testing first, then within-family (cuts effective N)")
     sv = sub.add_parser("serve", help="read-only dashboard + JSON API on localhost")
     sv.add_argument("--host", default="127.0.0.1")
@@ -170,6 +173,9 @@ def main(argv=None):
     elif a.cmd == "revalidate":
         from .pipeline import revalidate
         revalidate.run(cfg)
+    elif a.cmd == "repair":
+        from .pipeline import repair
+        repair.run(cfg, apply=a.apply)
     elif a.cmd == "clean":
         from . import retention
         retention.run(cfg, older_than_days=a.older_than, dry_run=a.dry_run)

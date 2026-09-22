@@ -8,6 +8,7 @@ from pathlib import Path
 from sqlalchemy import func, inspect, select
 
 from ..config import Config
+from ..library import Library
 from . import repo
 from .models import ForwardSignal, Fundamental, LibraryFactor, Run, Trial
 from .session import database_url, get_engine, session_scope
@@ -121,7 +122,28 @@ def verify(cfg: Config) -> dict:
     if extra:
         print(f"\n{len(extra)} database row(s) are not in this CSV mirror. Usually fine - a "
               f"deleted or rotated CSV - but check if you did not expect it.")
+    lib_path = cfg.run_dir / "library.json"
+    json_lib_n = 0
+    if lib_path.exists():
+        json_lib_n = len(Library(lib_path).items)
+    db_lib_n = repo.count_library(cfg.name, url=url)
+    print(f"library factors:    {json_lib_n} in library.json, {db_lib_n} in the database "
+          f"for config {cfg.name!r}")
+    if json_lib_n != db_lib_n:
+        print("  counts differ — run `alphalab db sync-library` or `alphalab repair --apply`")
     if ok:
         print("\nthe two records agree")
     return dict(ok=ok, csv_rows=len(rows), db_rows=len(db_keys),
-                missing=len(missing), extra=len(extra), distinct_formulas=db_fp_count)
+                missing=len(missing), extra=len(extra), distinct_formulas=db_fp_count,
+                library_json=json_lib_n, library_db=db_lib_n)
+
+
+def sync_library(cfg: Config) -> None:
+    """Mirror library.json into library_factors for this config."""
+    url = cfg.storage.database_url or database_url()
+    lib = Library(cfg.run_dir / "library.json")
+    if not lib.items:
+        print(f"library.json is empty at {cfg.run_dir / 'library.json'}")
+    n, _ = repo.sync_library(cfg.name, lib.items, url=url)
+    db_n = repo.count_library(cfg.name, url=url)
+    print(f"synced {n} factor(s); database now has {db_n} for config {cfg.name!r}")

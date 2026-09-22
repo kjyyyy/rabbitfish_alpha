@@ -25,10 +25,22 @@ from ..factors.zoo import alpha158_exprs
 from ..families import classify, diagnostics
 from ..leakage import future_noise_test, numerical_checks
 from ..ledger import Ledger
-from ..library import Library
+from ..library import Library, item_fingerprint
 from ..logging_setup import progress
 from ..miners.gp import fitness, next_generation
 from ..scheduler import FamilyBandit
+
+
+def _known_fingerprints(ledger: Ledger, lib: Library) -> set[str]:
+    seen: set[str] = set()
+    for r in ledger.rows():
+        if r.get("stage", "").startswith("discover") and r.get("fingerprint"):
+            seen.add(r["fingerprint"])
+    for it in lib.items.values():
+        fp = item_fingerprint(it)
+        if fp:
+            seen.add(fp)
+    return seen
 
 
 def _load_llm(cfg: Config):
@@ -164,6 +176,7 @@ def _evaluate(cfg: Config, cands, y, end_valid):
 
 def run(cfg: Config, gp: bool = True) -> dict:
     ledger = Ledger(cfg.run_dir / "ledger.csv", cfg=cfg)
+    ledger._ensure_schema()
     lib = Library(cfg.run_dir / "library.json")
     zoo = E.Zoo(alpha158_exprs() + [v["expr"] for v in lib.items.values()])
     rng = random.Random(cfg.mining.seed)
@@ -177,7 +190,7 @@ def run(cfg: Config, gp: bool = True) -> dict:
         cands.append(dict(name=f"rnd_{k:03d}", expr=e, sign=0, source="random",
                           rationale="random grammar (no prior hypothesis)"))
         k += 1
-    seen: set[str] = set()
+    seen = _known_fingerprints(ledger, lib)
     screened = _screen(cfg, cands, zoo, ledger, seen)
     print(f"{len(cands)} candidates -> {len(screened)} after AST/complexity/originality screen")
     rows, LS_all, num_rejects = _evaluate(cfg, screened, y, end_valid)
@@ -202,9 +215,9 @@ def run(cfg: Config, gp: bool = True) -> dict:
                 pool_f = [r for r in rows if r.get("family") == fam] or rows
                 parents = sorted(pool_f, key=lambda r: -fitness(r, cfg.mining.gp_lambda_nodes,
                                                                 cfg.mining.gp_mu_corr))[:8]
-                kids += next_generation(parents, n_kids, rng, seen)
+                kids += next_generation(parents, n_kids, rng, seen, ledger.run_id)
             raw_kids = len(kids)
-            kids = _screen(cfg, kids, zoo, ledger, set())
+            kids = _screen(cfg, kids, zoo, ledger, seen)
             if not kids:
                 print(f"  (generation {gen + 1}: {raw_kids} children generated, all screened out)")
             print(f"GP generation {gen + 1}: {len(kids)} children; budget "
@@ -226,8 +239,10 @@ def run(cfg: Config, gp: bool = True) -> dict:
         bandit.save()
 
     # ---- gates ---------------------------------------------------------------
-    prior = ledger.n_trials("discover-eval")
-    n_trials = prior + len(rows)
+    prior_fps = {r["fingerprint"] for r in ledger.rows()
+                 if r.get("stage", "").startswith("discover") and r.get("fingerprint")}
+    run_fps = {r["fingerprint"] for r in rows if r.get("fingerprint")}
+    n_trials = len(prior_fps | run_fps)
 
     # Is this search proportionate to the universe it is searching? IR = IC*sqrt(BR),
     # so a thin universe caps the achievable information ratio while every trial
@@ -260,6 +275,10 @@ def run(cfg: Config, gp: bool = True) -> dict:
               f"more search on the same data cannot clear a bar that search itself creates.")
     g = cfg.gates
     kept_series, fam_counts = [], {}
+    for it in lib.items.values():
+        if it["status"] in ("active", "probation"):
+            fam = it.get("family") or (classify(it["expr"]) if it.get("expr") else "other")
+            fam_counts[fam] = fam_counts.get(fam, 0) + 1
     for r in sorted(rows, key=lambda r: -r["ic_t"]):
         dsr, _, _ = stats.deflated_sharpe(r["ls"], n_trials, sr_var)
         r["dsr"] = dsr
@@ -284,11 +303,24 @@ def run(cfg: Config, gp: bool = True) -> dict:
         if status in ("active", "probation") and fam_counts.get(r.get("family", "other"), 0) >= cfg.gates.max_per_family:
             status, r["status"] = "rejected", "rejected"
             reason.append(f"family quota ({cfg.gates.max_per_family} per mechanism family)")
+        dup_of = lib.find_by_fingerprint(r["fingerprint"])
+        lib_name = dup_of or r["name"]
         if status in ("active", "probation"):
-            fam_counts[r.get("family", "other")] = fam_counts.get(r.get("family", "other"), 0) + 1
-            kept_series.append(r["ls"])
-            lib.upsert(r["name"], r["expr"], r["sign"], r["source"], status,
-                       dict(ic_t=r["ic_t"], dsr=dsr, later_ic=r["later_ic_mean"]))
+            if dup_of:
+                status, r["status"] = "rejected", "rejected"
+                reason.append(f"duplicate of {dup_of}")
+            else:
+                fam_counts[r.get("family", "other")] = fam_counts.get(r.get("family", "other"), 0) + 1
+                kept_series.append(r["ls"])
+                lib.upsert(lib_name, r["expr"], r["sign"], r["source"], status,
+                           dict(ic_t=r["ic_t"], dsr=dsr, later_ic=r["later_ic_mean"]),
+                           fingerprint=r["fingerprint"], family=r.get("family", ""))
+                if getattr(cfg.storage, "use_database", True):
+                    try:
+                        from ..db import repo
+                        repo.upsert_library(cfg.name, lib.items[lib_name], url=cfg.storage.database_url)
+                    except Exception:  # noqa: BLE001
+                        pass
         ledger.log(stage="discover-eval", name=r["name"], source=r["source"], expr=r["expr"],
                    fingerprint=r["fingerprint"], parent_id=r.get("parent_id", ""),
                    source_model=r.get("source_model", ""), prompt_sha=r.get("prompt_sha", ""),

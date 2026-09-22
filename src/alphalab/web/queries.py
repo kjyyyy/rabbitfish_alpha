@@ -124,12 +124,46 @@ def treadmill(cfg: Config) -> dict:
 GATES = ("t_stat_min", "dsr_min", "revalidation", "forward")
 
 
+def _library_state_sha(lib: dict) -> str:
+    import hashlib
+
+    from ..library import item_fingerprint
+    parts = []
+    for name in sorted(lib):
+        it = lib[name]
+        parts.append("|".join([name, it.get("status", ""), str(it.get("passes", 0)),
+                               str(it.get("strikes", 0)), item_fingerprint(it)]))
+    return hashlib.sha1("\n".join(parts).encode()).hexdigest()
+
+
+def _revalidation_stale(cfg: Config, config_name: str | None, lib: dict, reval: dict) -> dict:
+    if not reval:
+        return dict(stale=False, reason="")
+    current = _library_state_sha(lib)
+    file_sha = reval.get("library_sha")
+    if not file_sha or file_sha != current:
+        return dict(stale=True, reason="library state changed since revalidation was recorded",
+                    current_library_sha=current, file_library_sha=file_sha or "")
+    return dict(stale=False, reason="", current_library_sha=current, file_library_sha=file_sha)
+
+
+def _revalidation_moves(reval: dict, lib: dict) -> tuple[list[str], list[str]]:
+    """Promotions/retirements only when the current library backs the claim."""
+    promoted = [n for n in reval.get("promoted", [])
+              if lib.get(n, {}).get("status") == "active"]
+    retired = [n for n in reval.get("retired", [])
+               if lib.get(n, {}).get("status") == "retired"]
+    return promoted, retired
+
+
 def loop(cfg: Config, config_name: str | None = None) -> list[dict]:
     """Per library factor: the stage it is at and the ONE gate blocking it."""
     name = config_name or cfg.name
     lib = artefacts.read(cfg, "library", name, default={}) or {}
     reval = artefacts.read(cfg, "revalidation", name, default={}) or {}
-    reval_by = {r["name"]: r for r in reval.get("factors", [])}
+    stale_info = _revalidation_stale(cfg, name, lib, reval)
+    reval_fresh = not stale_info.get("stale")
+    reval_by = {r["name"]: r for r in reval.get("factors", [])} if reval_fresh else {}
     fwd = forward(cfg, name)
     clean_weeks = sum(1 for p in fwd["published"] if p.get("clean"))
     out = []
@@ -139,7 +173,7 @@ def loop(cfg: Config, config_name: str | None = None) -> list[dict]:
         dsr = first.get("dsr")
         rv = reval_by.get(n, {})
         if it["status"] == "retired":
-            stage, gate, have, need = "retired", "-", rv.get("recheck_t"), None
+            stage, gate, have, need = "retired", "-", rv.get("recheck_t") if reval_fresh else last.get("recheck_t"), None
         elif it["status"] == "probation":
             stage = "probation"
             if dsr is not None and dsr < cfg.gates.dsr_min:
@@ -155,8 +189,11 @@ def loop(cfg: Config, config_name: str | None = None) -> list[dict]:
                         status=it["status"], stage=stage, blocking_gate=gate,
                         have=have, need=need,
                         discovery_ic_t=first.get("ic_t"), discovery_dsr=dsr,
-                        recheck_t=rv.get("recheck_t") if rv else last.get("recheck_t"),
+                        recheck_t=(rv.get("recheck_t") if reval_fresh and rv else last.get("recheck_t")),
                         strikes=it.get("strikes", 0), passes=it.get("passes", 0)))
+    if stale_info.get("stale"):
+        for row in out:
+            row["revalidation_stale"] = True
     return sorted(out, key=lambda r: (r["status"] != "active", r["status"] != "probation",
                                       -(r["discovery_ic_t"] or 0)))
 
@@ -179,14 +216,17 @@ def search_allocation(cfg: Config, config_name: str | None = None) -> dict:
 
 
 def decay(cfg: Config, config_name: str | None = None) -> dict:
+    lib = artefacts.read(cfg, "library", config_name, default={}) or {}
     r = artefacts.read(cfg, "revalidation", config_name, default={}) or {}
-    rows = r.get("factors", [])
+    stale_info = _revalidation_stale(cfg, config_name, lib, r)
+    promoted, retired = _revalidation_moves(r, lib) if r else ([], [])
+    rows = list(r.get("factors", [])) if not stale_info.get("stale") else []
     for row in rows:
         d, t = row.get("discovery_ic_t"), row.get("recheck_t")
         row["retained"] = (t / d) if (d and t is not None and d != 0) else None
     rows.sort(key=lambda x: -(x.get("recheck_t") or -99))
     return dict(window=r.get("window"), sessions=r.get("sessions"),
-                promoted=r.get("promoted", []), retired=r.get("retired", []), factors=rows)
+                promoted=promoted, retired=retired, factors=rows, **stale_info)
 
 
 def versions(cfg: Config) -> list[dict]:

@@ -11,11 +11,11 @@ from .. import expr as E
 
 
 def next_generation(parents: list[dict], n_children: int, rng: random.Random,
-                    seen: set[str]) -> list[dict]:
+                    seen: set[str], run_id: str = "run") -> list[dict]:
     parents = [p for p in parents if p.get("expr")]
     if not parents:
         return []
-    kids, tries = [], 0
+    kids, tries, gp_n = [], 0, 0
     while len(kids) < n_children and tries < n_children * 20:
         tries += 1
         a = rng.choice(parents)
@@ -34,7 +34,8 @@ def next_generation(parents: list[dict], n_children: int, rng: random.Random,
         if fp in seen:
             continue
         seen.add(fp)
-        kids.append(dict(name=f"gp_{len(seen):04d}", expr=e, sign=0, parent_id=pid,
+        gp_n += 1
+        kids.append(dict(name=f"gp_{run_id}_{gp_n:04d}", expr=e, sign=0, parent_id=pid,
                          source="gp", rationale=f"GP child of {pid}"))
     return kids
 

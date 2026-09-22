@@ -68,9 +68,40 @@ def upsert_library(config_name: str, item: dict, url: str | None = None) -> None
         if row is None:
             row = LibraryFactor(config_name=config_name, name=item["name"])
             s.add(row)
-        for k in ("expr", "family", "sign", "source", "status", "strikes", "ic_t", "dsr"):
+        for k in ("expr", "family", "sign", "source", "status", "strikes", "passes",
+                  "fingerprint", "ic_t", "dsr"):
             if k in item and item[k] is not None:
-                setattr(row, k, item[k])
+                setattr(row, k, item[k] if k not in ("sign", "strikes", "passes")
+                        else int(item[k]))
+
+
+def sync_library(config_name: str, items: dict, url: str | None = None) -> tuple[int, int]:
+    """Upsert every JSON library member and remove DB rows not in the JSON."""
+    names = set(items.keys())
+    with session_scope(url) as s:
+        existing = {r.name: r for r in s.scalars(
+            select(LibraryFactor).where(LibraryFactor.config_name == config_name)).all()}
+        for name, item in items.items():
+            row = existing.get(name)
+            if row is None:
+                row = LibraryFactor(config_name=config_name, name=name)
+                s.add(row)
+            for k in ("expr", "family", "sign", "source", "status", "strikes", "passes",
+                      "fingerprint", "ic_t", "dsr"):
+                if k in item and item[k] is not None:
+                    setattr(row, k, item[k] if k not in ("sign", "strikes", "passes")
+                            else int(item[k]))
+        for name, row in list(existing.items()):
+            if name not in names:
+                s.delete(row)
+    return len(items), len(names)
+
+
+def count_library(config_name: str, url: str | None = None) -> int:
+    with session_scope(url) as s:
+        return int(s.scalar(
+            select(func.count()).select_from(LibraryFactor)
+            .where(LibraryFactor.config_name == config_name)) or 0)
 
 
 def library(config_name: str, statuses=("probation", "active"), url: str | None = None) -> list[dict]:

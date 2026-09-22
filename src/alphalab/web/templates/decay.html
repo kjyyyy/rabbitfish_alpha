@@ -1,6 +1,12 @@
 {% extends "base.html" %}{% from "_macros.html" import tools, statuspill, empty %}
 {% block body %}
 <h2>Decay and the retirement queue</h2>
+{% if data.stale %}
+<p class="note" style="border-left:3px solid var(--pico-del-color);padding-left:1rem">
+<strong>Stale revalidation artefact.</strong> {{ data.reason }} Promotions and retirements shown
+here are filtered against the current library; run <code>alphalab revalidate</code> or
+<code>alphalab repair --apply</code> to refresh.</p>
+{% endif %}
 <p class="note">Every library factor rechecked on data it was <em>not</em> discovered on. Two
 consecutive strong rechecks promote; two weak ones retire. One quiet window neither kills nor
 crowns anything, and the same window can never be counted twice.</p>

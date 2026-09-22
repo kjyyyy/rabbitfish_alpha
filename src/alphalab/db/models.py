@@ -100,6 +100,8 @@ class LibraryFactor(Base):
     source: Mapped[str] = mapped_column(String(32), default="")
     status: Mapped[str] = mapped_column(String(24), default="probation", index=True)
     strikes: Mapped[int] = mapped_column(Integer, default=0)
+    passes: Mapped[int] = mapped_column(Integer, default=0)
+    fingerprint: Mapped[str] = mapped_column(String(32), default="", index=True)
     added_on: Mapped[dt.date] = mapped_column(Date, default=lambda: dt.date.today())
     updated_at: Mapped[dt.datetime] = mapped_column(DateTime(timezone=True), default=_now, onupdate=_now)
     ic_t: Mapped[float | None] = mapped_column(Float, nullable=True)

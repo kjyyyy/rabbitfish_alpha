@@ -5,11 +5,21 @@ and a combiner that weights factors by their TRAILING information coefficient
 from __future__ import annotations
 
 import datetime as dt
+import hashlib
 import json
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
+
+from . import expr as E
+
+
+def item_fingerprint(item: dict) -> str:
+    fp = item.get("fingerprint") or ""
+    if not fp and item.get("expr"):
+        fp = E.fingerprint(item["expr"])
+    return fp
 
 
 class Library:
@@ -20,10 +30,32 @@ class Library:
     def save(self):
         self.path.write_text(json.dumps(self.items, indent=2, default=float))
 
-    def upsert(self, name, expr, sign, source, status, metrics):
+    def state_sha(self) -> str:
+        """Hash of lifecycle fields the revalidation artefact is tied to."""
+        parts = []
+        for name in sorted(self.items):
+            it = self.items[name]
+            parts.append("|".join([name, it.get("status", ""), str(it.get("passes", 0)),
+                                   str(it.get("strikes", 0)), item_fingerprint(it)]))
+        return hashlib.sha1("\n".join(parts).encode()).hexdigest()
+
+    def find_by_fingerprint(self, fp: str) -> str | None:
+        for name, it in self.items.items():
+            if item_fingerprint(it) == fp:
+                return name
+        return None
+
+    def upsert(self, name, expr, sign, source, status, metrics, fingerprint: str = "",
+               family: str = ""):
         now = dt.date.today().isoformat()
         it = self.items.get(name, {"added": now, "history": []})
         it.update(name=name, expr=expr, sign=int(sign), source=source, status=status)
+        if fingerprint:
+            it["fingerprint"] = fingerprint
+        elif expr and not it.get("fingerprint"):
+            it["fingerprint"] = E.fingerprint(expr)
+        if family:
+            it["family"] = family
         it["history"].append({"date": now, "status": status, **metrics})
         self.items[name] = it
 

@@ -208,6 +208,19 @@ def test_unknown_run_is_404_not_a_traceback(client):
     assert c.get("/runs/nope").status_code == 404
 
 
+def test_decay_page_flags_stale_revalidation(client):
+    c, cfg = client
+    run_dir = cfg.run_dir
+    lib = {"f1": dict(name="f1", status="probation", passes=1, strikes=0, expr="$close",
+                      fingerprint="abc", history=[{"ic_t": 3.0}])}
+    (run_dir / "library.json").write_text(json.dumps(lib))
+    (run_dir / "revalidation.json").write_text(json.dumps(
+        dict(promoted=["f1"] * 5, retired=[], library_sha="bad", factors=[
+            dict(name="f1", discovery_ic_t=3, recheck_t=2.5, now="active")])) )
+    text = c.get("/decay").text
+    assert "Stale revalidation artefact" in text
+
+
 def test_artefact_reads_cannot_escape_the_work_directory(client, tmp_path):
     from alphalab.web import artefacts
     _, cfg = client

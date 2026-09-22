@@ -22,6 +22,18 @@ decide what survives. Equities, crypto, futures and EU ETS carbon.
 Topics: quantitative-finance, algorithmic-trading, factor-investing, backtesting,
 qlib, llm-agents, carbon-markets, research-reproducibility
 
+## What it has found so far
+
+This repo is meant to **falsify** strategies, not to sell one. On the main China A-share
+harvest to date, the lab took its own best composite and **failed it on four independent
+tests**, and it **quantified two leakage biases** rather than assuming them away. As an
+alpha generator it has surfaced **one weak, coherent effect** (price–volume correlation,
+reversal-signed, later IC roughly **0.02**). That signal has **not cleared Deflated Sharpe**,
+does **not compound**, and does **not survive a 3× cost sweep**. **Nothing is promoted to
+active** in the current library — if the dashboard ever showed promotions after a repair,
+that was a stale `revalidation.json`; run `alphalab repair --apply` and
+`alphalab revalidate` so the UI matches the record.
+
 ## Why this design
 
 A review of the 2024–26 alpha-mining literature (`docs/research/03-llm-alpha-mining-papers.md`) found:

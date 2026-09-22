@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.15.1 - artefact integrity (ledger, library, revalidation)
+
+- **`alphalab repair`** — dry-run by default; with `--apply`, migrates mixed-width
+  `ledger.csv` to the current schema, backfills library fingerprints, retires duplicate
+  expressions under second names, quarantines stale `revalidation.json`, and syncs
+  `library_factors` to `library.json`.
+- **Dashboard** — decay and loop pages detect when `revalidation.json` no longer matches
+  `library.json` (`library_sha`); phantom promotions are not shown.
+- **Discover** — seeds dedup from the ledger and library; GP names include `run_id`;
+  distinct-fingerprint trial count; family cap counts existing library members; discover
+  upserts `library_factors`.
+- **`alphalab db sync-library`** — mirror JSON library into the database; `db verify`
+  reports JSON vs DB library counts.
+
 ## v0.15 - EU ETS carbon, and the geometry a one-instrument market needs
 
 Research: `docs/research/06-eu-ets-data-and-specs.md`. Engineering: `docs/eu-ets.md`.
