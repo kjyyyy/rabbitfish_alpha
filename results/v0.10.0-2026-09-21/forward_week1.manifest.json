@@ -1,0 +1,12 @@
+{
+  "signal_date": "2026-09-18",
+  "strategy": "A_hypothesis_composite",
+  "topk": 30,
+  "execution_date": "",
+  "clean": false,
+  "file": "2026-09-18_A_hypothesis_composite.csv",
+  "file_sha256": "35bf9fa24083a7d1a6e5c40f64d2844fbc787fde0771b3fad914d7c3439d42a7",
+  "config_sha": "56acc980c131",
+  "git_sha": "13dec543bae872cc8caceb3849736854806f4a82-dirty",
+  "published_utc": "2026-09-21T17:20:42+00:00"
+}

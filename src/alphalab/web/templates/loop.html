@@ -1,0 +1,34 @@
+{% extends "base.html" %}{% from "_macros.html" import tools, statuspill, empty %}
+{% block body %}
+<h2>What is blocking each factor</h2>
+<p class="note">The stage each library factor has reached, and the <strong>one gate</strong> it is
+waiting on, with what it has against what it needs. This is the page that makes the lab a loop
+rather than a log: promotion requires two consecutive rechecks on new data, and a claim above
+"research-aid" requires forward weeks that were published before the outcome existed.</p>
+
+<div class="cards">
+  <div class="card"><div class="k">Forward weeks published</div><div class="v">{{ forward.n_published }}</div></div>
+  <div class="card"><div class="k">Clean weeks</div><div class="v">{{ forward.n_clean }}</div>
+    <div class="h">written before their execution close</div></div>
+  <div class="card"><div class="k">Needed for forward evidence</div><div class="v">13</div></div>
+</div>
+
+{% if rows %}
+{{ tools('#loop') }}
+<div class="scroll"><table id="loop"><thead><tr>
+<th data-sort>Factor</th><th data-sort title="{{ tip('source_col') }}">Source</th><th data-sort title="{{ tip('stage') }}">Stage</th>
+<th data-sort title="{{ tip('blocking_gate') }}">Blocking gate</th><th class="num" data-sort title="{{ tip('have_need') }}">Has</th><th class="num" data-sort title="{{ tip('have_need') }}">Needs</th>
+<th></th><th class="num" data-sort title="{{ tip('ic_t') }}">Discovery t</th><th class="num" data-sort title="{{ tip('recheck_t') }}">Recheck t</th>
+<th class="num" data-sort title="{{ tip('strikes') }}">Strikes</th></tr></thead><tbody>
+{% for r in rows %}
+<tr><td title="{{ r.expr }}">{{ r.name }}</td><td>{{ r.source }}</td>
+<td>{{ statuspill(r.stage) }}</td><td>{{ r.blocking_gate }}</td>
+<td class="num">{{ r.have|num(2) }}</td><td class="num">{{ r.need|num(2) }}</td>
+<td>{% if r.need %}<div class="bar"><i style="width: {{ r.have|width(r.need) }}%"></i></div>{% endif %}</td>
+<td class="num">{{ r.discovery_ic_t|num(2) }}</td><td class="num">{{ r.recheck_t|num(2) }}</td>
+<td class="num">{{ r.strikes }}</td></tr>
+{% endfor %}</tbody></table></div>
+{% else %}
+{{ empty('No factors have entered the library yet.', 'alphalab discover') }}
+{% endif %}
+{% endblock %}

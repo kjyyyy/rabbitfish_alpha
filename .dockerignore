@@ -1,0 +1,25 @@
+# Keep the build context small and secrets out of it.
+.git
+.github
+.venv
+.env
+*.log
+runs/
+runs_*.log
+data/
+results/
+docs/
+tests/
+__pycache__/
+**/__pycache__/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.pkl
+*.parquet
+*.db
+*.db-wal
+*.db-shm
+*.tar.gz
+.DS_Store

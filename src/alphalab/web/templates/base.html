@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Alpha Lab{% endblock %}</title>
+<link rel="stylesheet" href="/static/style.css">
+</head><body>
+<header><div class="wrap">
+  <div class="brand">
+    <h1>Alpha Lab</h1>
+    <span class="sub">config <code>{{ cfg.name }}</code> · <a href="/gates" title="the dashboard cannot change any threshold">gates read-only</a></span>
+  </div>
+  <nav>{% for href, label in pages %}<a href="{{ href }}" class="{{ 'on' if path == href else '' }}">{{ label }}</a>{% endfor %}</nav>
+</div></header>
+<main><div class="wrap">{% block body %}{% endblock %}</div></main>
+<footer><div class="wrap">
+  Research software. It does not place orders and nothing here is financial advice.
+  This dashboard may never change a rule or a result. It can do exactly two things:
+  <a href="/hypotheses">pre-register a hypothesis</a> and <a href="/data">add a data source</a> —
+  both happen before any evidence exists, so neither can flatter an outcome. Thresholds,
+  statuses and the ledger are read-only from here, permanently.
+  Every number comes from the database and the run artefacts; nothing is recomputed, so this
+  cannot disagree with the CLI. Column definitions: <a href="/glossary">glossary</a>.
+  JSON for any page: <code>/api/…</code> (<a href="/api/docs">schema</a>).
+</div></footer>
+<script src="/static/app.js"></script>
+</body></html>

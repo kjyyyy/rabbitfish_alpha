@@ -1,0 +1,46 @@
+{
+  "model": {
+    "chosen": "A_hypothesis_composite",
+    "validation": {
+      "cagr": -0.008193208953255482,
+      "vol": 0.153000865718354,
+      "sharpe": 0.022452603937576844,
+      "max_dd": -0.25399090706280203,
+      "bench_cagr": -0.08068794012069702,
+      "excess_ann": 0.07058458850535562,
+      "info_ratio": 0.6316220065177253,
+      "n_days": 971,
+      "rank_ic": 0.06193034477226951,
+      "weekly_turnover": 0.2659793814432989,
+      "info_ratio_2x_costs": 0.2378170312055368,
+      "excess_ann_2x_costs": 0.02675756481843491
+    },
+    "holdout": {
+      "cagr": -0.04468154663415014,
+      "vol": 0.11879755646333412,
+      "sharpe": -0.32524983112993483,
+      "max_dd": -0.1911612126812381,
+      "bench_cagr": 0.1018519401550293,
+      "excess_ann": -0.14929884726851048,
+      "info_ratio": -1.009040183299752,
+      "n_days": 416,
+      "rank_ic": 0.023514614102406156,
+      "weekly_turnover": 0.26309523809523816
+    },
+    "claim_tier": "research-aid",
+    "checks_failed": [
+      "multiple_testing_DSR",
+      "holdout_clean",
+      "forward_evidence"
+    ],
+    "forward_weeks": 0,
+    "n_model_trials": 7,
+    "discovery_trials": 385,
+    "hurdle_sharpe_ann": 1.7806031407672263,
+    "config_name": "cn_csi300",
+    "config_sha": "2bc2dd85e730",
+    "written_utc": "2026-09-21T17:44:04+00:00",
+    "alphalab_version": "0.10.0",
+    "git_sha": "13dec543bae872cc8caceb3849736854806f4a82-dirty"
+  }
+}

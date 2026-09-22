@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block body %}
+<h2>Data sources</h2>
+<p class="note">Adding data happens <em>before</em> any evidence exists, so it cannot be used to
+select a result — which is why it is one of only two things this dashboard may write. Files are
+audited on the way in: duplicate dates, non-positive prices and <code>high &lt; low</code> are
+refused here rather than discovered halfway through a backtest.</p>
+
+{% if sources %}
+<div class="scroll"><table><thead><tr><th>Source</th><th>Path</th><th class="num">Instruments</th>
+<th class="num">Sessions</th><th>Range</th><th>In use</th></tr></thead><tbody>
+{% for s in sources %}
+<tr><td>{{ s.name }}</td><td><code>{{ s.path }}</code></td>
+<td class="num">{{ s.instruments or '-' }}</td><td class="num">{{ s.sessions }}</td>
+<td>{{ s.start }} … {{ s.end }}</td>
+<td>{% if s.in_use %}<span class="pill ok">this config</span>{% endif %}</td></tr>
+{% endfor %}</tbody></table></div>
+{% else %}
+<div class="empty">No data yet. Either <code>alphalab download-cn</code> for the free CSI-300 set,
+or upload your own CSVs below.</div>
+{% endif %}
+
+{% if result %}
+<h2>Result</h2>
+{% if result.error %}
+<div class="empty" style="border-style: solid; border-color: var(--bad); color: var(--bad)">
+<strong>Rejected.</strong> {{ result.error }}</div>
+{% else %}
+<div class="card">
+  <p><strong>{{ result.verdict }}</strong></p>
+  <p class="sub">{{ result.instruments }} instrument(s) staged at <code>{{ result.staged }}</code></p>
+  {% if result.problems %}
+  <ul>{% for p in result.problems %}<li class="reason">{{ p }}</li>{% endfor %}</ul>
+  <p class="sub">Fix these and upload again. Nothing was written to a data source.</p>
+  {% endif %}
+  {% if result.ingested %}<p class="sub">Config written: <code>{{ result.config }}</code> —
+  run <code>alphalab doctor -c {{ result.config }}</code> next.</p>
+  <p class="note"><strong>Two things this cannot check for you.</strong> {{ result.warning }}</p>
+  {% endif %}
+</div>
+{% endif %}
+{% endif %}
+
+<h2>Add a source</h2>
+<form method="post" action="/data" enctype="multipart/form-data" class="card">
+  <p><label>Name<br><input name="name" required placeholder="lse_smallcap" style="width:260px"></label></p>
+  <p><label>CSV files — one per symbol, named <code>SYMBOL.csv</code><br>
+    <input type="file" name="files" accept=".csv" multiple required></label></p>
+  <p class="sub">Required columns: <code>date, open, high, low, close, volume</code>.
+    <code>amount</code> and <code>vwap</code> are derived when absent.</p>
+  <p><label><input type="checkbox" name="ingest"> Ingest if the audit is clean</label>
+     <span class="sub">— unchecked, it only audits and writes nothing</span></p>
+  <p><button type="submit">Upload</button></p>
+</form>
+{% endblock %}

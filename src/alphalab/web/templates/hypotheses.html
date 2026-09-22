@@ -1,0 +1,45 @@
+{% extends "base.html" %}{% from "_macros.html" import tools, statuspill %}
+{% block body %}
+<h2>Pre-register a hypothesis</h2>
+<p class="note">Writing an idea down — hashed and timestamped — <em>before</em> it is tested is the
+opposite of p-hacking: it cannot be reworded afterwards to match whatever came out. Recording one
+here accepts nothing. It faces the AST whitelist, the complexity and originality caps, the t-stat
+and the Deflated Sharpe like every other candidate when <code>alphalab discover</code> next runs,
+and it counts toward the trial count that deflates every Sharpe in this config.</p>
+
+{% if ok %}<div class="empty" style="border-style: solid; border-color: var(--ok); color: var(--ok)">{{ ok }}</div>{% endif %}
+{% if err %}<div class="empty" style="border-style: solid; border-color: var(--bad); color: var(--bad)"><strong>Rejected.</strong> {{ err }}</div>{% endif %}
+
+<form method="post" action="/hypotheses" class="card" style="margin-top:14px">
+  <p><label>Short name<br><input name="name" required maxlength="64" placeholder="volume_reversal_20d" style="width:100%"></label></p>
+  <p><label>Expression<br><input name="expr" required placeholder="Mean($volume, 5) / Mean($volume, 60)" style="width:100%; font-family: var(--mono)"></label></p>
+  <p><label>Expected direction<br>
+    <select name="sign"><option value="1">+1 — high values predict high returns</option>
+    <option value="-1">−1 — high values predict low returns</option></select></label>
+    <span class="sub"> state it before testing, or the result cannot disconfirm anything</span></p>
+  <p><label>Economic mechanism — why should this work?<br>
+    <textarea name="rationale" required rows="3" minlength="20" style="width:100%"
+      placeholder="Who is on the other side of this trade, and why are they willing to lose?"></textarea></label></p>
+  <p><label>Author <input name="author" maxlength="64" placeholder="optional"></label></p>
+  <p><button type="submit">Pre-register</button>
+     <span class="sub">Recorded, not accepted.</span></p>
+</form>
+
+<h2>Pre-registered ({{ rows|length }})</h2>
+{% if rows %}
+{{ tools('#hyp') }}
+<div class="scroll"><table id="hyp"><thead><tr><th data-sort>Recorded</th><th data-sort>Name</th>
+<th class="num">Sign</th><th>Expression</th><th>Mechanism</th><th data-sort title="{{ tip('status') }}">Status</th>
+<th>Receipt</th></tr></thead><tbody>
+{% for r in rows %}
+<tr><td>{{ r.created_at[:19].replace('T', ' ') }}</td><td>{{ r.name }}</td>
+<td class="num">{{ '+1' if r.sign > 0 else '-1' }}</td>
+<td class="expr" title="{{ r.expr }}">{{ r.expr }}</td>
+<td class="reason">{{ r.rationale }}</td><td>{{ statuspill(r.status) }}</td>
+<td><code>{{ r.content_sha[:12] }}</code></td></tr>
+{% endfor %}</tbody></table></div>
+{% else %}
+<div class="empty">Nothing pre-registered yet. The written hypotheses shipped with the lab live in
+<code>src/alphalab/factors/hypotheses.py</code>; anything added here joins them as a candidate.</div>
+{% endif %}
+{% endblock %}

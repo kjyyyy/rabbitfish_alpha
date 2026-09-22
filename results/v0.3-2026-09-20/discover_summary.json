@@ -1,0 +1,84 @@
+{
+  "n_candidates": 132,
+  "n_evaluated": 212,
+  "n_trials_total": 212,
+  "naive_t2": 109,
+  "t3": 72,
+  "active": [],
+  "probation": [
+    "mom_12_1",
+    "rev_5d",
+    "rev_20d",
+    "max_ret_20d",
+    "abn_turnover",
+    "pv_corr_20d",
+    "vwap_gap",
+    "rnd_002",
+    "rnd_021",
+    "rnd_022",
+    "rnd_025",
+    "rnd_085",
+    "rnd_099",
+    "gp_0134",
+    "gp_0138",
+    "gp_0153",
+    "gp_0156",
+    "gp_0158",
+    "gp_0172",
+    "gp_0176",
+    "gp_0178",
+    "gp_0180",
+    "gp_0182",
+    "gp_0185",
+    "gp_0186",
+    "gp_0192",
+    "gp_0203",
+    "gp_0206",
+    "gp_0217",
+    "gp_0240",
+    "gp_0242",
+    "gp_0243",
+    "gp_0245"
+  ],
+  "pbo": 0.298,
+  "best_dsr": 0.8049878619220212,
+  "decay_top20": {
+    "discovery_ic": 0.04001038801659343,
+    "later_ic": 0.018782963105715502
+  },
+  "ic_corr_discovery_vs_later": 0.37410863126497884,
+  "ablation_by_source": {
+    "hypothesis": {
+      "evaluated": 12,
+      "t_ge_3": 7,
+      "probation": 7,
+      "active": 0,
+      "mean_disc_ic_of_t3": 0.030933222841494374,
+      "mean_later_ic_of_t3": 0.02109078861365907
+    },
+    "llm": {
+      "evaluated": 0,
+      "t_ge_3": 0,
+      "probation": 0,
+      "active": 0,
+      "mean_disc_ic_of_t3": null,
+      "mean_later_ic_of_t3": null
+    },
+    "random": {
+      "evaluated": 91,
+      "t_ge_3": 16,
+      "probation": 6,
+      "active": 0,
+      "mean_disc_ic_of_t3": 0.02684859340286826,
+      "mean_later_ic_of_t3": 0.00921874135888445
+    },
+    "gp": {
+      "evaluated": 109,
+      "t_ge_3": 49,
+      "probation": 20,
+      "active": 0,
+      "mean_disc_ic_of_t3": 0.030381990859421098,
+      "mean_later_ic_of_t3": 0.009946831710985692
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}{% from "_macros.html" import empty %}
+{% block body %}
+<h2>How much "alpha" is evaluation convention?</h2>
+<p class="note">One convention loosened at a time against a strictly causal baseline, with data,
+factors, portfolio rule and costs held fixed. Whatever performance appears is protocol-induced,
+not edge. This is the page to show anyone who asks whether the backtest is honest.</p>
+{% if data.baseline %}
+<div class="cards">
+  <div class="card"><div class="k">Baseline excess/yr</div><div class="v">{{ data.baseline.excess_ann|num(2, true) }}</div>
+    <div class="h">strictly causal</div></div>
+  <div class="card"><div class="k">Baseline IR</div><div class="v">{{ data.baseline.info_ratio|num(2) }}</div></div>
+</div>
+<div class="scroll"><table><thead><tr><th>Convention</th><th class="num" title="{{ tip('excess_ann') }}">Excess/yr</th>
+<th class="num" title="{{ tip('info_ratio') }}">IR</th><th class="num">Uplift vs causal</th><th class="num">IR uplift</th>
+</tr></thead><tbody>
+{% for k, v in data.variants.items() %}
+<tr><td>{{ k.replace('_', ' ') }}</td><td class="num">{{ v.excess_ann|num(2, true) }}</td>
+<td class="num">{{ v.info_ratio|num(2) }}</td>
+<td class="num">{{ v.excess_uplift_vs_baseline|num(2, true) }}</td>
+<td class="num">{{ v.ir_uplift_vs_baseline|num(2) }}</td></tr>
+{% endfor %}</tbody></table></div>
+{% if data.fundamentals_timing_bias_synthetic %}
+{% set f = data.fundamentals_timing_bias_synthetic %}
+<h2>Fundamentals timing (synthetic, {{ f.reporting_lag_days }}-day reporting lag)</h2>
+<p class="note">Joining fundamentals on the period end instead of the filing date is worth
+<strong>{{ f.inflation|num(4) }}</strong> of pure foresight in IC
+({{ f.ic_filing_date_join|num(4) }} honest vs {{ f.ic_period_end_join|num(4) }} leaky).</p>
+{% endif %}
+{% else %}{{ empty('No protocol audit has been run.', 'alphalab audit') }}{% endif %}
+{% endblock %}

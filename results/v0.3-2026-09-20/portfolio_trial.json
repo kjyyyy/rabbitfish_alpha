@@ -1,0 +1,172 @@
+{
+  "alpha_source": "A_hypothesis_composite",
+  "capital": 1000000.0,
+  "configs": [
+    {
+      "config": "1_naive_topk_equal",
+      "cagr": -0.0577,
+      "vol": 0.1564,
+      "sharpe": -0.302,
+      "max_dd": -0.3189,
+      "bench_cagr": -0.0807,
+      "excess_ann": 0.0199,
+      "info_ratio": 0.1832,
+      "turnover_per_rebalance": 0.989,
+      "avg_gross": 0.9993,
+      "impact_cost_ann": 0.0054,
+      "share_trades_capped": 0.0024
+    },
+    {
+      "config": "2_plus_bands",
+      "cagr": -0.0454,
+      "vol": 0.154,
+      "sharpe": -0.2251,
+      "max_dd": -0.3016,
+      "bench_cagr": -0.0807,
+      "excess_ann": 0.0325,
+      "info_ratio": 0.2984,
+      "turnover_per_rebalance": 0.7942,
+      "avg_gross": 0.9985,
+      "impact_cost_ann": 0.0043,
+      "share_trades_capped": 0.0011
+    },
+    {
+      "config": "3_plus_neutralised_alpha",
+      "cagr": -0.1168,
+      "vol": 0.2074,
+      "sharpe": -0.4954,
+      "max_dd": -0.5312,
+      "bench_cagr": -0.0807,
+      "excess_ann": -0.0356,
+      "info_ratio": -0.3654,
+      "turnover_per_rebalance": 1.0117,
+      "avg_gross": 0.9918,
+      "impact_cost_ann": 0.0042,
+      "share_trades_capped": 0.0021
+    },
+    {
+      "config": "4_plus_vol_scaled_weights",
+      "cagr": -0.1075,
+      "vol": 0.1981,
+      "sharpe": -0.4757,
+      "max_dd": -0.5103,
+      "bench_cagr": -0.0807,
+      "excess_ann": -0.0271,
+      "info_ratio": -0.2998,
+      "turnover_per_rebalance": 1.0213,
+      "avg_gross": 0.983,
+      "impact_cost_ann": 0.0046,
+      "share_trades_capped": 0.0011
+    },
+    {
+      "config": "5_market_neutral_long_short",
+      "cagr": -0.0121,
+      "vol": 0.0975,
+      "sharpe": -0.0762,
+      "max_dd": -0.2014,
+      "bench_cagr": -0.0807,
+      "excess_ann": 0.0597,
+      "info_ratio": 0.2537,
+      "turnover_per_rebalance": 0.8292,
+      "avg_gross": 0.9778,
+      "impact_cost_ann": 0.0017,
+      "share_trades_capped": 0.0022
+    },
+    {
+      "config": "6_market_neutral_full",
+      "cagr": -0.0726,
+      "vol": 0.0658,
+      "sharpe": -1.1122,
+      "max_dd": -0.2962,
+      "bench_cagr": -0.0807,
+      "excess_ann": -0.006,
+      "info_ratio": -0.0315,
+      "turnover_per_rebalance": 1.0297,
+      "avg_gross": 0.9889,
+      "impact_cost_ann": 0.0023,
+      "share_trades_capped": 0.0024
+    }
+  ],
+  "best": "2_plus_bands",
+  "style_diagnostic": {
+    "ic_raw": 0.06192943303982319,
+    "ic_style_neutral": 0.02371174511352738,
+    "share_of_signal_from_style": 0.6171167092991188,
+    "alpha_vs_style": {
+      "beta": -0.3813530657725026,
+      "size": -0.3922763137918988,
+      "vol": -0.49727992483072875,
+      "mom": 0.14042557649468473
+    }
+  },
+  "capacity": [
+    {
+      "capital": 100000.0,
+      "excess_ann": 0.03543444942013736,
+      "info_ratio": 0.3256609351015464,
+      "cagr": -0.04259979160932381,
+      "turnover_per_rebalance": 0.7941580756013745,
+      "avg_gross": 0.9984536082474228,
+      "impact_cost_ann": 0.001367590208450089,
+      "share_trades_capped": 0.0011300424358934456,
+      "faithful": true
+    },
+    {
+      "capital": 1000000.0,
+      "excess_ann": 0.032480385091283884,
+      "info_ratio": 0.2983787924196212,
+      "cagr": -0.045428144401124304,
+      "turnover_per_rebalance": 0.7941580756013745,
+      "avg_gross": 0.9984536082474228,
+      "impact_cost_ann": 0.004324699964446733,
+      "share_trades_capped": 0.0011300424358934456,
+      "faithful": true
+    },
+    {
+      "capital": 10000000.0,
+      "excess_ann": 0.023138813457450155,
+      "info_ratio": 0.21224588912972048,
+      "cagr": -0.054318539157343526,
+      "turnover_per_rebalance": 0.7941580756013745,
+      "avg_gross": 0.9984536082474228,
+      "impact_cost_ann": 0.013675902084500889,
+      "share_trades_capped": 0.0011300424358934456,
+      "faithful": true
+    },
+    {
+      "capital": 100000000.0,
+      "excess_ann": -0.006366528755603831,
+      "info_ratio": -0.0579989615753111,
+      "cagr": -0.0818549444492036,
+      "turnover_per_rebalance": 0.7918275610711341,
+      "avg_gross": 0.9972190374457903,
+      "impact_cost_ann": 0.04279289156128426,
+      "share_trades_capped": 0.010072116591260732,
+      "faithful": true
+    },
+    {
+      "capital": 1000000000.0,
+      "excess_ann": 0.024799610392202152,
+      "info_ratio": 0.2247015575054446,
+      "cagr": -0.049383702167651755,
+      "turnover_per_rebalance": 0.5393191091263059,
+      "avg_gross": 0.8387954877482561,
+      "impact_cost_ann": 0.054369887916704204,
+      "share_trades_capped": 0.5445692731670002,
+      "faithful": false
+    },
+    {
+      "capital": 10000000000.0,
+      "excess_ann": 0.07206921444793155,
+      "info_ratio": 0.46107430733297355,
+      "cagr": 0.004005923292608182,
+      "turnover_per_rebalance": 0.10792828981153264,
+      "avg_gross": 0.2888181176024682,
+      "impact_cost_ann": 0.011586048713516994,
+      "share_trades_capped": 0.8494020906221144,
+      "faithful": false
+    }
+  ],
+  "crowding_r2_last": 0.04704507063537037,
+  "crowding_r2_max": 0.13453991366263104
+}

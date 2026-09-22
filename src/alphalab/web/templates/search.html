@@ -1,0 +1,35 @@
+{% extends "base.html" %}{% from "_macros.html" import empty %}
+{% block body %}
+<h2>Where the search budget went</h2>
+<p class="note">{{ data.note }}</p>
+
+<div class="cards">
+  <div class="card"><div class="k">Distinct trials</div><div class="v">{{ data.n_trials_total or '-' }}</div></div>
+  <div class="card"><div class="k">Sharpe needed now</div><div class="v">{{ data.hurdle_sharpe_ann|num(2) }}</div>
+    <div class="h">to clear DSR {{ cfg.gates.dsr_min }}</div></div>
+  <div class="card"><div class="k">Trial budget</div><div class="v">{{ data.trial_budget or 'none' }}</div></div>
+  <div class="card"><div class="k">PBO</div><div class="v">{{ data.pbo|num(2) }}</div>
+    <div class="h">overfitting probability</div></div>
+</div>
+
+{% if data.families %}
+<h2>Reward vs in-sample significance, by mechanism family</h2>
+<div class="scroll"><table><thead><tr><th title="{{ tip('family') }}">Family</th><th class="num" title="{{ tip('n_trials_at_eval') }}">Children</th>
+<th class="num" title="{{ tip('reward_rate') }}">Reward rate (held out)</th><th></th>
+<th class="num" title="{{ tip('in_sample_rate') }}">In-sample rate (old rule)</th><th></th>
+<th class="num">Gap</th></tr></thead><tbody>
+{% for f in data.families %}
+<tr><td>{{ f.family }}</td><td class="num">{{ f.trials }}</td>
+<td class="num">{{ f.reward_rate|num(2) }}</td>
+<td><div class="bar"><i style="width: {{ f.reward_rate|width(1) }}%"></i></div></td>
+<td class="num">{{ f.in_sample_rate|num(2) }}</td>
+<td><div class="bar"><i style="width: {{ f.in_sample_rate|width(1) }}%"></i></div></td>
+<td class="num">{{ f.gap|num(2) }}</td></tr>
+{% endfor %}</tbody></table></div>
+<p class="note">A family ranked far higher by the old in-sample rule than by held-out evidence was
+buying research effort with significance it could not reproduce. That is what this column pair is
+for, and it is why the allocator no longer uses the right-hand one.</p>
+{% else %}
+{{ empty('No discovery run has recorded a family allocation yet.', 'alphalab discover') }}
+{% endif %}
+{% endblock %}

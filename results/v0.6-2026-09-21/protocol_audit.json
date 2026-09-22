@@ -1,0 +1,38 @@
+{
+  "baseline": {
+    "cagr": -0.0011713267276445283,
+    "vol": 0.1583015182000565,
+    "sharpe": 0.07167850281931448,
+    "max_dd": -0.24948845207072223,
+    "bench_cagr": -0.08068794012069702,
+    "excess_ann": 0.07849613648387958,
+    "info_ratio": 0.5565389331391629,
+    "n_days": 971
+  },
+  "variants": {
+    "same_day_execution": {
+      "excess_ann": 0.12318914487595513,
+      "info_ratio": 0.8719568447600398,
+      "excess_uplift_vs_baseline": 0.044693008392075545,
+      "ir_uplift_vs_baseline": 0.31541791162087685
+    },
+    "centered_features": {
+      "excess_ann": -0.3148799679233137,
+      "info_ratio": -2.302614483477683,
+      "excess_uplift_vs_baseline": -0.3933761044071933,
+      "ir_uplift_vs_baseline": -2.859153416616846
+    },
+    "global_normalisation": {
+      "excess_ann": 0.011959215806506884,
+      "info_ratio": 0.09295211861233009,
+      "excess_uplift_vs_baseline": -0.0665369206773727,
+      "ir_uplift_vs_baseline": -0.4635868145268328
+    },
+    "survivors_only": {
+      "excess_ann": 0.07706239819191438,
+      "info_ratio": 0.5449433576084162,
+      "excess_uplift_vs_baseline": -0.0014337382919652059,
+      "ir_uplift_vs_baseline": -0.011595575530746749
+    }
+  }
+}

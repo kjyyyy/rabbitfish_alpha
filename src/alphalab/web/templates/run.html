@@ -1,0 +1,49 @@
+{% extends "base.html" %}{% from "_macros.html" import tools, statuspill %}
+{% block body %}
+<h2>Run {{ run.run_id }}</h2>
+<div class="cards">
+  <div class="card"><div class="k">Config</div><div class="v" style="font-size:15px">{{ run.config }}</div>
+    <div class="h">sha {{ run.config_sha[:8] }}</div></div>
+  <div class="card"><div class="k">Code</div><div class="v" style="font-size:15px">{{ run.version or '-' }}</div>
+    <div class="h">{{ (run.git_sha or 'commit not recorded')[:12] }}</div></div>
+  <div class="card"><div class="k">Trials in this run</div><div class="v">{{ run.trials }}</div></div>
+  <div class="card"><div class="k">Distinct formulas</div><div class="v">{{ run.distinct_formulas }}</div></div>
+  <div class="card"><div class="k">Deflated against</div><div class="v">{{ run.trial_count_at_eval or '-' }}</div>
+    <div class="h">cumulative trials at evaluation</div></div>
+</div>
+<p class="note">Every Deflated Sharpe below was computed against the trial count shown in its own
+row, not against this run alone. Rejected candidates are listed by default: they are the
+denominator, and hiding them is how a backtest flatters itself.</p>
+
+<h2>Trials <span class="sub">({{ trials|length }} shown)</span></h2>
+{{ tools('#trials') }}
+<div class="scroll"><table id="trials"><thead><tr>
+<th data-sort>Name</th><th data-sort title="{{ tip('source_col') }}">Source</th><th data-sort title="{{ tip('family') }}">Family</th><th data-sort title="{{ tip('stage') }}">Stage</th>
+<th class="num" data-sort title="{{ tip('ic_t') }}">IC t</th><th class="num" data-sort title="{{ tip('inner_oos_t') }}">Inner OOS t</th>
+<th class="num" data-sort title="{{ tip('dsr') }}">DSR</th><th class="num" data-sort title="{{ tip('n_trials_at_eval') }}">N at eval</th>
+<th class="num" data-sort title="{{ tip('later_ic_mean') }}">Later IC</th><th data-sort title="{{ tip('status') }}">Status</th><th>Why</th></tr></thead><tbody>
+{% for t in trials %}
+<tr><td title="{{ t.expr }}">{{ t.name }}</td><td>{{ t.source }}</td><td>{{ t.family }}</td>
+<td>{{ t.stage }}</td><td class="num">{{ t.ic_t|num(2) }}</td>
+<td class="num">{{ t.inner_oos_t|num(2) }}</td><td class="num">{{ t.dsr|num(3) }}</td>
+<td class="num">{{ t.n_trials_at_eval or '-' }}</td><td class="num">{{ t.later_ic_mean|num(4) }}</td>
+<td>{{ statuspill(t.status) }}</td><td class="reason">{{ t.reason }}</td></tr>
+{% endfor %}</tbody></table></div>
+
+{% if cards %}
+<h2>Validity cards</h2>
+<div class="scroll"><table><thead><tr><th>Strategy</th><th title="{{ tip('claim_tier') }}">Tier</th><th>Allowed claim</th>
+<th>Failed checks</th></tr></thead><tbody>
+{% for name, c in cards.items() %}
+<tr><td>{{ name }}</td><td>{{ statuspill(c.tier) }}</td><td class="reason">{{ c.allowed_claim }}</td>
+<td class="reason">{{ c.checks.items()|selectattr('1.ok', 'equalto', false)|map(attribute='0')|join(', ') or 'none' }}</td></tr>
+{% endfor %}</tbody></table></div>
+{% endif %}
+
+<h2>Protocol exceptions</h2>
+{% if exceptions %}
+<div class="scroll"><table><thead><tr><th>Kind</th><th>Scope</th><th>Reason</th><th>Author</th></tr></thead>
+<tbody>{% for e in exceptions %}<tr><td>{{ e.kind }}</td><td>{{ e.scope }}</td>
+<td class="reason">{{ e.reason }}</td><td>{{ e.author }}</td></tr>{% endfor %}</tbody></table></div>
+{% else %}<p class="note">None logged — the standard protocol was followed.</p>{% endif %}
+{% endblock %}

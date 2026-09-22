@@ -1,0 +1,22 @@
+# TEMPLATE - US large caps. Build data first (see docs/data.md).
+# WARNING: Yahoo-sourced data is NOT survivorship-free; cards will say so.
+name: us_sp500
+market:
+  name: us
+  qlib_region: us
+  provider_uri: data/us_data
+  universe: sp500
+  benchmark: ^GSPC
+  point_in_time_universe: false
+  survivorship_note: "Yahoo data + current constituents -> survivorship bias; use a point-in-time vendor (e.g. Norgate) before trusting results"
+  price_limits: false
+  costs:
+    commission: 0.0005
+    slippage: 0.0005
+splits:
+  discover_start: "2008-01-01"
+  discover_end: "2018-12-31"
+  valid_years: [2019, 2020, 2021, 2022]
+  holdout_years: [2023, 2024, 2025]
+  holdout_burned: false
+  data_end: "2026-09-18"

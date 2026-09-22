@@ -1,0 +1,16 @@
+{% extends "base.html" %}{% from "_macros.html" import tools %}
+{% block body %}
+<h2>What every column means</h2>
+<p class="note">Each term below appears as a tooltip on the column header it belongs to. If a
+number on this dashboard is disputed, the <em>source</em> column says which function produced it
+and which config key, if any, sets its threshold — so it can be traced rather than argued about.</p>
+{{ tools('#gloss') }}
+<div class="scroll"><table id="gloss"><thead><tr><th data-sort>Term</th><th>Definition</th>
+<th data-sort>Config key</th><th data-sort>Produced by</th></tr></thead><tbody>
+{% for t in terms %}
+<tr><td><strong>{{ t.label }}</strong></td>
+<td class="reason">{{ t.long }}</td>
+<td>{% if t.config_key %}<code>{{ t.config_key }}</code>{% else %}—{% endif %}</td>
+<td><code>{{ t.source }}</code></td></tr>
+{% endfor %}</tbody></table></div>
+{% endblock %}

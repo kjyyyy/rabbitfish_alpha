@@ -1,0 +1,19 @@
+{% extends "base.html" %}{% from "_macros.html" import tools, statuspill %}
+{% block body %}
+<h2>Versions</h2>
+<p class="note">Runs grouped by the code that produced them. Runs before v0.9 show no commit
+because the field existed but was never populated — which is why "did v0.5 beat v0.4?" used to
+be answerable only by reading committed markdown.</p>
+{{ tools('#ver') }}
+<div class="scroll"><table id="ver"><thead><tr><th data-sort title="{{ tip('commit') }}">Version</th><th data-sort title="{{ tip('commit') }}">Commit</th>
+<th class="num" data-sort>Runs</th><th data-sort>Last run</th><th data-sort>Chosen</th>
+<th data-sort title="{{ tip('claim_tier') }}">Tier</th><th class="num" data-sort title="{{ tip('info_ratio') }}">Validation IR</th>
+<th class="num" data-sort title="{{ tip('info_ratio') }}">Holdout IR</th><th class="num" data-sort title="{{ tip('n_trials_at_eval') }}">Trials</th></tr></thead><tbody>
+{% for r in rows %}
+<tr><td>{{ r.version }}</td><td><code>{{ (r.git_sha or '-')[:8] }}</code></td>
+<td class="num">{{ r.runs }}</td><td>{{ r.last[:19] }}</td><td>{{ r.chosen or '-' }}</td>
+<td>{% if r.claim_tier %}{{ statuspill(r.claim_tier) }}{% else %}-{% endif %}</td>
+<td class="num">{{ r.validation_ir|num(2) }}</td><td class="num">{{ r.holdout_ir|num(2) }}</td>
+<td class="num">{{ r.discovery_trials or '-' }}</td></tr>
+{% endfor %}</tbody></table></div>
+{% endblock %}

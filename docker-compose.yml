@@ -1,0 +1,116 @@
+# Local stack. Nothing here is required: the lab runs on SQLite with a mock
+# model straight from pip. Profiles keep the default start-up small.
+#
+#   docker compose up -d                          # postgres only (the dev default)
+#   docker compose --profile local-llm up -d      # + ollama (CPU, ~5GB for an 8B model)
+#   docker compose --profile gpu up -d            # + vllm   (needs an NVIDIA GPU)
+#   docker compose --profile app up -d            # + the lab image itself (API on :8000)
+#   docker compose run --rm lab discover -c configs/cn_csi300.yaml    # one-shot CLI job
+#
+# Ports bind to 127.0.0.1 only: none of these services should be reachable from
+# the network, and Postgres here has a development password.
+
+x-lab-common: &lab-common
+  build:
+    context: .
+    dockerfile: Dockerfile
+  image: alphalab:${ALPHALAB_TAG:-0.15.0}
+  env_file:
+    - path: .env
+      required: false      # a fresh clone has no .env yet
+  environment:
+    DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://alphalab:alphalab@postgres:5432/alphalab}
+    ALPHALAB_AUTO_MIGRATE: "1"
+    # inside compose the model servers are reachable by service name, not localhost
+    ALPHALAB_LLM_BASE_URL: ${ALPHALAB_LLM_BASE_URL:-http://ollama:11434/v1}
+  volumes:
+    - ./runs:/app/runs                 # research record + caches (host-visible on purpose)
+    - ./data:/app/data                 # Qlib dataset (~570MB, downloaded once)
+  depends_on:
+    postgres:
+      condition: service_healthy
+  restart: "no"
+
+services:
+  # ---------------------------------------------------------------- storage --
+  postgres:
+    image: postgres:17.5-alpine
+    environment:
+      POSTGRES_USER: alphalab
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-alphalab}
+      POSTGRES_DB: alphalab
+    ports: ["127.0.0.1:5432:5432"]
+    volumes: ["pgdata:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U alphalab -d alphalab"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+    restart: unless-stopped
+    # then: export DATABASE_URL=postgresql+psycopg://alphalab:alphalab@localhost:5432/alphalab
+
+  # ------------------------------------------------------------------- lab ---
+  # One-shot CLI runs. Not started by `up`; use `docker compose run --rm lab ...`.
+  lab:
+    <<: *lab-common
+    profiles: ["cli"]
+    command: ["journal"]
+
+  # The read-only dashboard + JSON API (task 9). Harmless before it exists:
+  # the profile keeps it out of the default `up`.
+  api:
+    <<: *lab-common
+    profiles: ["app"]
+    command: ["serve", "--host", "0.0.0.0", "--port", "8000"]
+    ports: ["127.0.0.1:8000:8000"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=3).status==200 else 1)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------- models ---
+  ollama:
+    profiles: ["local-llm"]
+    image: ollama/ollama:0.12.3        # pinned: `latest` silently changes the runtime
+    ports: ["127.0.0.1:11434:11434"]
+    volumes: ["ollama:/root/.ollama"]
+    healthcheck:
+      test: ["CMD-SHELL", "ollama list >/dev/null 2>&1 || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+    # then: docker compose exec ollama ollama pull llama3.1:8b
+    # config: provider "openai", base_url http://ollama:11434/v1 (in compose)
+    #                                      http://localhost:11434/v1 (on the host)
+
+  vllm:
+    profiles: ["gpu"]                  # needs an NVIDIA GPU + nvidia-container-toolkit
+    image: vllm/vllm-openai:v0.10.2
+    command: ["--model", "Qwen/Qwen2.5-7B-Instruct", "--max-model-len", "8192"]
+    ports: ["127.0.0.1:8001:8000"]     # 8000 on the host belongs to the API
+    volumes: ["hf:/root/.cache/huggingface"]
+    environment:
+      HUGGING_FACE_HUB_TOKEN: ${HUGGING_FACE_HUB_TOKEN:-}
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request;urllib.request.urlopen('http://127.0.0.1:8000/health',timeout=3)\""]
+      interval: 30s
+      timeout: 5s
+      retries: 10
+      start_period: 300s               # first start downloads ~15GB of weights
+    deploy:
+      resources:
+        reservations:
+          devices: [{driver: nvidia, count: 1, capabilities: [gpu]}]
+    restart: unless-stopped
+    # config: provider "openai", base_url http://vllm:8000/v1 (in compose)
+
+volumes:
+  pgdata:
+  ollama:
+  hf:

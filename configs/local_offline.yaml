@@ -1,0 +1,36 @@
+# Fully offline profile: no network, no API keys, no GPU.
+# The LLM arm uses the deterministic mock provider, so `make offline` exercises
+# the entire pipeline - gates, discovery, models, audit - on a laptop.
+name: local_offline
+market:
+  name: cn
+  qlib_region: cn
+  provider_uri: data/cn_data
+  universe: csi300
+  benchmark: SH000300
+  point_in_time_universe: true
+  price_limits: true
+  adv_expr: "$amount"
+  adv_scale: 1000.0
+  costs:
+    commission: 0.0003
+    slippage: 0.0010
+    stamp_sell: 0.0005
+    stamp_sell_before: 0.0010
+    stamp_change_date: "2023-08-28"
+splits:
+  discover_start: "2012-01-01"
+  discover_end: "2020-12-31"
+  valid_years: [2021, 2022, 2023, 2024]
+  holdout_years: [2025, 2026]
+  holdout_burned: true
+  data_end: "2026-09-18"
+mining:
+  n_random: 40          # smaller budget so a full offline run finishes quickly
+  gp_generations: 1
+  gp_population: 20
+llm:
+  provider: mock
+  critic_provider: mock
+storage:
+  use_database: true    # SQLite in runs/alphalab.db unless DATABASE_URL is set

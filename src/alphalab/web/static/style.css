@@ -1,0 +1,70 @@
+/* Hand-written, ~150 lines, no framework: the dashboard must render air-gapped.
+   Light and dark both supported through one set of custom properties. */
+:root {
+  --bg: #fbfbfa; --panel: #fff; --ink: #1c1c1a; --muted: #6b6a66; --line: #e4e3de;
+  --accent: #8a5a2b; --ok: #2f6f45; --warn: #9a6b18; --bad: #97352c;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#161614; --panel:#1e1e1c; --ink:#eceae4; --muted:#9a978e; --line:#33322e;
+          --accent:#d3a06a; --ok:#7fbf95; --warn:#d9b061; --bad:#e08b80; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 -apple-system,
+  BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+header { border-bottom: 1px solid var(--line); background: var(--panel); position: sticky;
+  top: 0; z-index: 5; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 16px; }
+.brand { display: flex; align-items: baseline; gap: 12px; padding: 14px 0 8px; }
+.brand h1 { font-size: 17px; margin: 0; letter-spacing: -.01em; }
+.brand .sub { color: var(--muted); font-size: 13px; }
+nav { display: flex; gap: 2px; flex-wrap: wrap; padding-bottom: 8px; }
+nav a { padding: 5px 10px; border-radius: 6px; text-decoration: none; color: var(--muted);
+  font-size: 14px; }
+nav a:hover { background: var(--bg); color: var(--ink); }
+nav a.on { background: var(--accent); color: #fff; }
+main { padding: 22px 0 60px; }
+h2 { font-size: 16px; margin: 26px 0 10px; }
+h2:first-child { margin-top: 0; }
+p.note { color: var(--muted); font-size: 13px; margin: 6px 0 14px; max-width: 76ch; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+  padding: 12px 14px; }
+.card .k { color: var(--muted); font-size: 12px; text-transform: uppercase;
+  letter-spacing: .04em; }
+.card .v { font-size: 22px; font-variant-numeric: tabular-nums; margin-top: 2px; }
+.card .h { color: var(--muted); font-size: 12px; margin-top: 2px; }
+table { width: 100%; border-collapse: collapse; background: var(--panel);
+  border: 1px solid var(--line); border-radius: 8px; overflow: hidden; font-size: 14px; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line);
+  white-space: nowrap; }
+th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase;
+  letter-spacing: .03em; cursor: pointer; user-select: none; }
+tbody tr:last-child td { border-bottom: 0; }
+th[title] { border-bottom: 1px dotted var(--muted); }
+th[title]::after { content: "?"; font-size: 9px; vertical-align: super; opacity: .55;
+  margin-left: 2px; }
+tbody tr:hover { background: var(--bg); }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; font-family: var(--mono); }
+td.expr { font-family: var(--mono); font-size: 12px; max-width: 360px; overflow: hidden;
+  text-overflow: ellipsis; }
+td.reason { color: var(--muted); font-size: 12.5px; max-width: 320px; white-space: normal; }
+.pill { display: inline-block; padding: 1px 7px; border-radius: 99px; font-size: 12px;
+  border: 1px solid var(--line); }
+.pill.ok { color: var(--ok); border-color: var(--ok); }
+.pill.warn { color: var(--warn); border-color: var(--warn); }
+.pill.bad { color: var(--bad); border-color: var(--bad); }
+.bar { height: 7px; border-radius: 99px; background: var(--line); overflow: hidden;
+  min-width: 70px; }
+.bar > i { display: block; height: 100%; background: var(--accent); }
+.tools { display: flex; gap: 8px; align-items: center; margin: 10px 0; flex-wrap: wrap; }
+input[type=search] { padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px;
+  background: var(--panel); color: var(--ink); min-width: 220px; font-size: 14px; }
+a { color: var(--accent); }
+.scroll { overflow-x: auto; }
+.empty { background: var(--panel); border: 1px dashed var(--line); border-radius: 8px;
+  padding: 22px; color: var(--muted); }
+footer { color: var(--muted); font-size: 12.5px; border-top: 1px solid var(--line);
+  padding: 14px 0; margin-top: 40px; }
+code { font-family: var(--mono); font-size: 12.5px; background: var(--bg);
+  border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; }

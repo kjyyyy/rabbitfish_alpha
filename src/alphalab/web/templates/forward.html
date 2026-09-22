@@ -1,0 +1,33 @@
+{% extends "base.html" %}{% from "_macros.html" import statuspill, empty %}
+{% block body %}
+<h2>Forward pre-registration</h2>
+<p class="note">{{ data.note }}. This is the only clean evidence in the repo: a signal published,
+hash-stamped and committed before the market could resolve it.</p>
+<div class="cards">
+  <div class="card"><div class="k">Published</div><div class="v">{{ data.n_published }}</div></div>
+  <div class="card"><div class="k">Clean</div><div class="v">{{ data.n_clean }}</div>
+    <div class="h">published before execution</div></div>
+  <div class="card"><div class="k">Evaluated</div><div class="v">{{ data.n_evaluated }}</div>
+    <div class="h">horizon elapsed</div></div>
+</div>
+{% if data.published %}
+<h2>Publications</h2>
+<div class="scroll"><table><thead><tr><th>Signal date</th><th title="{{ tip('execution_date') }}">Execution</th><th>Strategy</th>
+<th title="{{ tip('clean') }}">Clean</th><th>Published (UTC)</th><th>File SHA-256</th></tr></thead><tbody>
+{% for p in data.published|reverse %}
+<tr><td>{{ p.signal_date }}</td><td>{{ p.execution_date or '-' }}</td><td>{{ p.strategy }}</td>
+<td>{{ statuspill('passed' if p.clean else 'rejected') }}</td>
+<td>{{ p.published_utc[:19].replace('T', ' ') }}</td>
+<td><code>{{ p.file_sha256[:16] }}</code></td></tr>
+{% endfor %}</tbody></table></div>
+{% else %}{{ empty('No week has been pre-registered.', 'alphalab forward publish') }}{% endif %}
+{% if data.evaluated %}
+<h2>Realised</h2>
+<div class="scroll"><table><thead><tr><th>Signal date</th><th class="num">Return</th>
+<th class="num">Benchmark</th><th class="num">Excess</th></tr></thead><tbody>
+{% for e in data.evaluated %}
+<tr><td>{{ e.signal_date }}</td><td class="num">{{ e.ret|num(2, true) }}</td>
+<td class="num">{{ e.bench|num(2, true) }}</td><td class="num">{{ e.excess|num(2, true) }}</td></tr>
+{% endfor %}</tbody></table></div>
+{% endif %}
+{% endblock %}

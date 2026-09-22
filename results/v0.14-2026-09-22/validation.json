@@ -1,0 +1,66 @@
+{
+  "strategy": "A_hypothesis_composite|valid",
+  "market": "equity",
+  "n_obs": 971,
+  "sharpe_in_sample": 0.6418929425048514,
+  "cpcv": {
+    "paths": 28,
+    "sharpe_mean": 0.7388491724660003,
+    "sharpe_std": 0.8361118253711699,
+    "sharpe_p05": -0.41690634847957764,
+    "sharpe_p50": 0.6189857887094682,
+    "sharpe_p95": 1.9572856761947106,
+    "prob_negative": 0.21428571428571427,
+    "note": "a single walk-forward path is one draw from this distribution"
+  },
+  "overfitting_factor": {
+    "sharpe_in_sample": 0.6418929425048514,
+    "factor": 2.391,
+    "sharpe_discounted": 0.2684341297063331,
+    "acceptance_threshold": 0.7,
+    "passes": false,
+    "note": "CFM arXiv:1902.01802 - halve a CTA-like backtest Sharpe. Combined with their acceptance threshold of ~0.7, a candidate needs roughly 1.4 in backtest to be a credible 0.7 live."
+  },
+  "log_wealth": {
+    "n": 971,
+    "mean_return": 1.4078966557708914e-05,
+    "mean_t": 0.04479003659581358,
+    "log_wealth": -0.03273924582731154,
+    "geometric_mean": -3.371647157392826e-05,
+    "variance_drag": 4.779543813163718e-05,
+    "skew": 0.4777067092827567,
+    "kurtosis": 8.573339440086993,
+    "compounds": false,
+    "mean_positive_but_compounds_negative": false
+  },
+  "lagged_signal_decay": {
+    "curve": {
+      "0": -0.008460699189577148,
+      "1": -0.009056208589309223,
+      "2": -0.00766921366760609,
+      "3": 7.398868762642508e-05,
+      "5": 0.0028527895685352966,
+      "10": -0.0018899452369974812
+    },
+    "errors": {},
+    "base": -0.008460699189577148,
+    "cost_per_period_of_delay": -0.0006570753952579667,
+    "half_life_periods": null,
+    "worst_lag": 1,
+    "latency_race": false,
+    "note": "a signal that halves within one period is a speed race a retail participant loses; a flat curve means execution urgency is low and slippage tolerance is high"
+  },
+  "cost_sweep": {
+    "curve": {
+      "0.0": 0.14477987146499866,
+      "1.0": 0.07849613648387958,
+      "3.0": -0.05407133347835868
+    },
+    "at_assumed_costs": 0.07849613648387958,
+    "breaks_at_multiple": 3.0,
+    "zero_cost_uplift": 0.06628373498111907,
+    "survives_3x": false,
+    "verdict": "dies at 3.0x costs - this was a cost assumption, not an edge",
+    "source": "protocol_audit.json (engine re-run per multiplier)"
+  }
+}

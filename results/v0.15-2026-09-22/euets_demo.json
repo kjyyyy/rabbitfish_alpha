@@ -1,0 +1,206 @@
+{
+  "n_hypotheses": 5,
+  "horizons": [
+    1,
+    5,
+    10,
+    20,
+    60
+  ],
+  "n_trials": 20,
+  "results": [
+    {
+      "name": "auction_cover_ratio",
+      "horizon": 1,
+      "signal_memory_days": 11,
+      "ic": 0.0206,
+      "t_newey_west": 1.11,
+      "t_non_overlapping": 1.12,
+      "bets_per_year": 17.4
+    },
+    {
+      "name": "auction_cover_ratio",
+      "horizon": 5,
+      "signal_memory_days": 11,
+      "ic": 0.0273,
+      "t_newey_west": 0.85,
+      "t_non_overlapping": 0.91,
+      "bets_per_year": 3.5
+    },
+    {
+      "name": "auction_cover_ratio",
+      "horizon": 10,
+      "signal_memory_days": 11,
+      "ic": 0.0282,
+      "t_newey_west": 0.76,
+      "t_non_overlapping": 0.29,
+      "bets_per_year": 1.7
+    },
+    {
+      "name": "auction_cover_ratio",
+      "horizon": 20,
+      "signal_memory_days": 11,
+      "ic": 0.0019,
+      "t_newey_west": 0.17,
+      "t_non_overlapping": -0.81,
+      "bets_per_year": 0.9
+    },
+    {
+      "name": "auction_cover_ratio",
+      "horizon": 60,
+      "signal_memory_days": 11,
+      "ic": -0.0527,
+      "t_newey_west": -0.74,
+      "t_non_overlapping": -1.09,
+      "bets_per_year": 0.3
+    },
+    {
+      "name": "auction_discount",
+      "horizon": 1,
+      "signal_memory_days": 1,
+      "ic": -0.0169,
+      "t_newey_west": -0.94,
+      "t_non_overlapping": -0.93,
+      "bets_per_year": 238.1
+    },
+    {
+      "name": "auction_discount",
+      "horizon": 5,
+      "signal_memory_days": 1,
+      "ic": -0.0122,
+      "t_newey_west": -0.46,
+      "t_non_overlapping": 1.15,
+      "bets_per_year": 47.7
+    },
+    {
+      "name": "auction_discount",
+      "horizon": 10,
+      "signal_memory_days": 1,
+      "ic": -0.0078,
+      "t_newey_west": -0.33,
+      "t_non_overlapping": 0.3,
+      "bets_per_year": 23.8
+    },
+    {
+      "name": "auction_discount",
+      "horizon": 20,
+      "signal_memory_days": 1,
+      "ic": -0.0167,
+      "t_newey_west": -0.74,
+      "t_non_overlapping": -1.54,
+      "bets_per_year": 12.0
+    },
+    {
+      "name": "auction_discount",
+      "horizon": 60,
+      "signal_memory_days": 1,
+      "ic": -0.013,
+      "t_newey_west": -0.51,
+      "t_non_overlapping": -0.61,
+      "bets_per_year": 4.0
+    },
+    {
+      "name": "bidder_breadth",
+      "horizon": 1,
+      "signal_memory_days": 1,
+      "ic": -0.0006,
+      "t_newey_west": 0.11,
+      "t_non_overlapping": 0.11,
+      "bets_per_year": 252.0
+    },
+    {
+      "name": "bidder_breadth",
+      "horizon": 5,
+      "signal_memory_days": 1,
+      "ic": 0.0177,
+      "t_newey_west": 0.99,
+      "t_non_overlapping": 0.23,
+      "bets_per_year": 50.4
+    },
+    {
+      "name": "bidder_breadth",
+      "horizon": 10,
+      "signal_memory_days": 1,
+      "ic": 0.0243,
+      "t_newey_west": 1.69,
+      "t_non_overlapping": -0.16,
+      "bets_per_year": 25.2
+    },
+    {
+      "name": "bidder_breadth",
+      "horizon": 20,
+      "signal_memory_days": 1,
+      "ic": 0.0127,
+      "t_newey_west": 0.88,
+      "t_non_overlapping": 0.53,
+      "bets_per_year": 12.6
+    },
+    {
+      "name": "bidder_breadth",
+      "horizon": 60,
+      "signal_memory_days": 1,
+      "ic": 0.0166,
+      "t_newey_west": 1.45,
+      "t_non_overlapping": 0.08,
+      "bets_per_year": 4.2
+    },
+    {
+      "name": "compliance_seasonal",
+      "horizon": 1,
+      "signal_memory_days": 42,
+      "ic": 0.0063,
+      "t_newey_west": 0.28,
+      "t_non_overlapping": 0.28,
+      "bets_per_year": 2.9
+    },
+    {
+      "name": "compliance_seasonal",
+      "horizon": 5,
+      "signal_memory_days": 42,
+      "ic": -0.0013,
+      "t_newey_west": -0.03,
+      "t_non_overlapping": 0.04,
+      "bets_per_year": 0.6
+    },
+    {
+      "name": "compliance_seasonal",
+      "horizon": 10,
+      "signal_memory_days": 42,
+      "ic": -0.0138,
+      "t_newey_west": -0.15,
+      "t_non_overlapping": -0.03,
+      "bets_per_year": 0.3
+    },
+    {
+      "name": "compliance_seasonal",
+      "horizon": 20,
+      "signal_memory_days": 42,
+      "ic": -0.0163,
+      "t_newey_west": -0.12,
+      "t_non_overlapping": -0.21,
+      "bets_per_year": 0.1
+    },
+    {
+      "name": "compliance_seasonal",
+      "horizon": 60,
+      "signal_memory_days": 42,
+      "ic": 0.0853,
+      "t_newey_west": 0.93,
+      "t_non_overlapping": 1.71,
+      "bets_per_year": 0.0
+    }
+  ],
+  "best": "compliance_seasonal@60d",
+  "best_sharpe": 0.5412847296105707,
+  "dsr_if_single_trial": 0.8371453143907865,
+  "dsr_counting_the_sweep": 0.06012238916619273,
+  "hurdle_sharpe_single": 0.8212234305665378,
+  "hurdle_sharpe_after_sweep": 1.5833888186622884,
+  "unavailable_on_free_data": [
+    "carry",
+    "calendar_spread",
+    "fuel_switching",
+    "basis_momentum"
+  ],
+  "caveat": "synthetic data with one planted relationship; the numbers are manufactured and only the machinery is being demonstrated"
+}

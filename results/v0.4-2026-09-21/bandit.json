@@ -1,0 +1,30 @@
+{
+  "trend": {
+    "wins": 1,
+    "trials": 7
+  },
+  "reversal": {
+    "wins": 4,
+    "trials": 11
+  },
+  "volatility": {
+    "wins": 3,
+    "trials": 13
+  },
+  "range": {
+    "wins": 5,
+    "trials": 22
+  },
+  "price_volume": {
+    "wins": 15,
+    "trials": 27
+  },
+  "liquidity": {
+    "wins": 4,
+    "trials": 9
+  },
+  "other": {
+    "wins": 0,
+    "trials": 12
+  }
+}

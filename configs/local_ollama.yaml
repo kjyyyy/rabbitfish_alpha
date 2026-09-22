@@ -1,0 +1,17 @@
+# Local models via Ollama (CPU-friendly). Start it with `make up`, then:
+#   docker compose exec ollama ollama pull llama3.1:8b
+#   docker compose exec ollama ollama pull qwen2.5:7b
+# Proposer and critic deliberately use different model families.
+name: cn_csi300_ollama
+market: {provider_uri: data/cn_data, universe: csi300, benchmark: SH000300,
+         adv_expr: "$amount", adv_scale: 1000.0,
+         costs: {commission: 0.0003, slippage: 0.0010, stamp_sell: 0.0005}}
+splits: {holdout_burned: true, data_end: "2026-09-18"}
+llm:
+  provider: openai
+  model: llama3.1:8b
+  base_url: http://localhost:11434/v1
+  critic_provider: openai
+  critic_model: qwen2.5:7b
+  critic_base_url: http://localhost:11434/v1
+  training_cutoff: "2024-12-31"

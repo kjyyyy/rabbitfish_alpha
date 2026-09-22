@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "alphalab"
+version = "0.15.0"
+description = "LLM-assisted formulaic alpha research with deterministic gates, validity cards and forward pre-registration"
+readme = "README.md"
+requires-python = ">=3.10,<3.13"
+license = {text = "MIT"}
+dependencies = [
+  "numpy>=1.26", "pandas>=2.2", "scipy>=1.11", "pyyaml>=6", "pydantic>=2.6",
+  "lightgbm>=4.3", "matplotlib>=3.8", "scikit-learn>=1.4",
+  "sqlalchemy>=2.0", "alembic>=1.13",
+]
+
+[project.optional-dependencies]
+qlib = ["pyqlib>=0.9.7"]
+postgres = ["psycopg[binary]>=3.1"]
+llm = ["anthropic>=1.7", "openai>=2.0"]
+web = ["fastapi>=0.115", "uvicorn[standard]>=0.30", "jinja2>=3.1"]
+dev = ["pytest>=8", "ruff>=0.6"]
+
+[project.scripts]
+alphalab = "alphalab.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+alphalab = ["agents/prompts/*.md", "web/templates/*.html", "web/static/*"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B"]
+ignore = ["E501", "B008", "B023", "E731", "E741"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

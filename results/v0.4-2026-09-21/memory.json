@@ -1,0 +1,258 @@
+{
+  "updated": "2026-09-21",
+  "good": {
+    "price_volume": {
+      "count": 4,
+      "examples": [
+        {
+          "expr": "Corr($close, Log($volume + 1), 10)",
+          "why": "GP child of rnd_002"
+        },
+        {
+          "expr": "Corr($close,Log($volume+1),20)",
+          "why": "Price-volume correlation: volume-confirmed moves by noise traders tend to reverse."
+        },
+        {
+          "expr": "Corr($close, Log($volume + 1), 40)",
+          "why": "GP child of pv_corr_20d"
+        }
+      ],
+      "mean_later_ic": 0.018037499999999998
+    },
+    "range": {
+      "count": 4,
+      "examples": [
+        {
+          "expr": "Min(Corr($high,(($high-$low)/$close),5),5)",
+          "why": "random grammar (no prior hypothesis)"
+        },
+        {
+          "expr": "Min(Corr($vwap,(($high-$low)/$close),10),10)/(Min(Corr($vwap,(($high-$low)/$close),10),60)+1e-12)-1",
+          "why": "random grammar (no prior hypothesis)"
+        },
+        {
+          "expr": "Corr((($high-$low)/$close),$vwap,5)",
+          "why": "random grammar (no prior hypothesis)"
+        }
+      ],
+      "mean_later_ic": 0.013175000000000001
+    },
+    "liquidity": {
+      "count": 3,
+      "examples": [
+        {
+          "expr": "Std($volume, 20) / Mean($volume, 120)",
+          "why": "GP child of abn_turnover"
+        },
+        {
+          "expr": "Sum(Log($volume+1),60)/(Sum(Log($volume+1),10)+1e-12)-1",
+          "why": "random grammar (no prior hypothesis)"
+        },
+        {
+          "expr": "Mean($volume, 20) / Mean(Log($volume + 1), 120)",
+          "why": "GP child of abn_turnoverxgp_0166"
+        }
+      ],
+      "mean_later_ic": 0.013706666666666666
+    },
+    "reversal": {
+      "count": 3,
+      "examples": [
+        {
+          "expr": "Mean($vwap, 5) / ($vwap + 1e-12) - 1",
+          "why": "GP child of rnd_050xgp_0131"
+        },
+        {
+          "expr": "$close/Ref($close,20)-1",
+          "why": "1-month reversal: overreaction by attention-driven traders."
+        },
+        {
+          "expr": "Corr(Corr($close / Ref($close, 1) - 1, $open, 5) - 1, $open, 20)",
+          "why": "GP child of rnd_057xrnd_092"
+        }
+      ],
+      "mean_later_ic": 0.00707
+    },
+    "volatility": {
+      "count": 2,
+      "examples": [
+        {
+          "expr": "Skew($close,60)",
+          "why": "random grammar (no prior hypothesis)"
+        },
+        {
+          "expr": "Std($close / Ref($close / $vwap - 1, 1) - 1, 20)",
+          "why": "GP child of low_vol_20dxrnd_084"
+        }
+      ],
+      "mean_later_ic": 0.0033150000000000002
+    },
+    "trend": {
+      "count": 1,
+      "examples": [
+        {
+          "expr": "Ref($close,20)/Ref($close,240)-1",
+          "why": "12-1 month momentum: slow diffusion of information (Jegadeesh-Titman). A-shares are known for weak momentum - a genuine test."
+        }
+      ],
+      "mean_later_ic": 0.0272
+    },
+    "other": {
+      "count": 1,
+      "examples": [
+        {
+          "expr": "$close/$vwap-1",
+          "why": "Close above VWAP = late-day buying pressure that mean-reverts."
+        }
+      ],
+      "mean_later_ic": -0.00766
+    }
+  },
+  "bad": {
+    "volatility": {
+      "count": 107,
+      "top_reasons": [
+        [
+          "t",
+          33
+        ],
+        [
+          "nodes 41>25",
+          12
+        ],
+        [
+          "nodes 31>25",
+          9
+        ]
+      ]
+    },
+    "range": {
+      "count": 98,
+      "top_reasons": [
+        [
+          "t",
+          46
+        ],
+        [
+          "constants 8>6",
+          15
+        ],
+        [
+          "numerical: near-constant cross-sections (median distinct val",
+          9
+        ]
+      ]
+    },
+    "liquidity": {
+      "count": 19,
+      "top_reasons": [
+        [
+          "t",
+          9
+        ],
+        [
+          "nodes 43>25",
+          3
+        ],
+        [
+          "nodes 27>25",
+          3
+        ]
+      ]
+    },
+    "reversal": {
+      "count": 18,
+      "top_reasons": [
+        [
+          "t",
+          12
+        ],
+        [
+          "constants 8>6",
+          3
+        ],
+        [
+          "redundant (corr>0.7)",
+          3
+        ]
+      ]
+    },
+    "trend": {
+      "count": 16,
+      "top_reasons": [
+        [
+          "t",
+          8
+        ],
+        [
+          "nodes 31>25",
+          3
+        ],
+        [
+          "nodes 34>25",
+          3
+        ]
+      ]
+    },
+    "price_volume": {
+      "count": 40,
+      "top_reasons": [
+        [
+          "t",
+          18
+        ],
+        [
+          "redundant (corr>0.7)",
+          15
+        ],
+        [
+          "numerical: invalid+extreme ratio 0.34 > 0.3",
+          3
+        ]
+      ]
+    },
+    "other": {
+      "count": 15,
+      "top_reasons": [
+        [
+          "t",
+          15
+        ]
+      ]
+    }
+  },
+  "top_failure_modes": [
+    [
+      "t",
+      141
+    ],
+    [
+      "redundant (corr>0.7)",
+      25
+    ],
+    [
+      "constants 8>6",
+      18
+    ],
+    [
+      "nodes 31>25",
+      15
+    ],
+    [
+      "nodes 41>25",
+      12
+    ],
+    [
+      "constants 7>6",
+      11
+    ],
+    [
+      "nodes 77>25",
+      9
+    ],
+    [
+      "numerical: near-constant cross-sections (median distinct val",
+      9
+    ]
+  ]
+}

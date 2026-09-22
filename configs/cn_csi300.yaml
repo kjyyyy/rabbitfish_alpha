@@ -1,0 +1,32 @@
+# China A-shares, CSI 300, Qlib community dataset (alphalab download-cn)
+name: cn_csi300
+market:
+  name: cn
+  qlib_region: cn
+  provider_uri: data/cn_data
+  universe: csi300
+  benchmark: SH000300
+  point_in_time_universe: true
+  price_limits: true
+  adv_expr: "$amount"
+  adv_scale: 1000.0
+  costs:
+    commission: 0.0003
+    slippage: 0.0010
+    stamp_sell: 0.0005
+    stamp_sell_before: 0.0010
+    stamp_change_date: "2023-08-28"
+splits:
+  discover_start: "2012-01-01"
+  discover_end: "2020-12-31"
+  valid_years: [2021, 2022, 2023, 2024]
+  holdout_years: [2025, 2026]
+  holdout_burned: true      # the 2025-26 holdout was already viewed in v0.1 -> descriptive only
+  data_end: "2026-09-18"    # bump when you refresh data
+llm:
+  provider: anthropic       # needs ANTHROPIC_API_KEY
+  model: claude-sonnet-5
+  training_cutoff: "2025-12-31"   # set to the real cutoff of the model you use
+  critic_provider: openai   # OpenAI-compatible endpoint; default = local Ollama
+  critic_model: llama3.1:8b
+  critic_base_url: http://localhost:11434/v1

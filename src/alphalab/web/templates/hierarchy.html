@@ -1,0 +1,29 @@
+{% extends "base.html" %}{% from "_macros.html" import statuspill, empty %}
+{% block body %}
+<h2>Hierarchical testing</h2>
+<p class="note">Mechanism families are tested first against N = number of families, and only the
+survivors earn a within-family search. Legitimate only because the family definitions and the
+composite rule are fixed in code before any result is seen.</p>
+{% if data.families %}
+<div class="cards">
+  <div class="card"><div class="k">Flat trials</div><div class="v">{{ data.n_flat_trials }}</div></div>
+  <div class="card"><div class="k">Family trials</div><div class="v">{{ data.n_family_trials }}</div></div>
+  <div class="card"><div class="k">Effective trials</div>
+    <div class="v">{{ (data.effective_trials or {}).get('eigenvalue_neff')|num(1) }}</div>
+    <div class="h">correlation-adjusted; reported, never gated on</div></div>
+</div>
+<div class="scroll"><table><thead><tr><th title="{{ tip('family') }}">Family</th><th class="num">Members</th>
+<th class="num" title="{{ tip('ic_mean') }}">IC mean</th><th class="num" title="{{ tip('ic_t') }}">IC t</th><th class="num" title="{{ tip('sharpe_ann') }}">Sharpe</th>
+<th class="num" title="{{ tip('dsr') }}">DSR (family level)</th><th class="num" title="{{ tip('later_ic_mean') }}">Later IC</th><th title="{{ tip('passes') }}">Passes</th>
+</tr></thead><tbody>
+{% for f, v in data.families.items() %}
+<tr><td>{{ f }}</td><td class="num">{{ v.members }}</td><td class="num">{{ v.ic_mean|num(4) }}</td>
+<td class="num">{{ v.ic_t|num(2) }}</td><td class="num">{{ v.ls_sharpe_ann|num(2) }}</td>
+<td class="num">{{ v.dsr_family_level|num(3) }}</td><td class="num">{{ v.later_ic|num(4) }}</td>
+<td>{{ statuspill('passed' if v.passes else 'rejected') }}</td></tr>
+{% endfor %}</tbody></table></div>
+<p class="note">A family composite reaching a high DSR against a handful of family trials is a
+statistical result, not a performance one: in v0.5 the price-volume composite reached DSR 0.999
+and then earned −0.4% in walk-forward validation.</p>
+{% else %}{{ empty('Hierarchical testing has not been run.', 'alphalab hierarchy') }}{% endif %}
+{% endblock %}

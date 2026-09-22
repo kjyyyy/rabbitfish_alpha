@@ -1,0 +1,223 @@
+{
+  "window": "2025-09-01..2026-09-10",
+  "window_start": "2021-01-01",
+  "window_end": "2026-09-18",
+  "sessions": 250,
+  "promoted": [
+    "gp_0201",
+    "gp_0161",
+    "rnd_085",
+    "rnd_065",
+    "gp_0195"
+  ],
+  "retired": [
+    "rnd_025",
+    "rev_20d",
+    "rnd_101",
+    "gp_0134",
+    "vwap_gap",
+    "gp_0242",
+    "gp_0179"
+  ],
+  "unchanged": 6,
+  "factors": [
+    {
+      "name": "gp_0201",
+      "family": "",
+      "source": "gp",
+      "was": "probation",
+      "now": "active",
+      "recheck_t": 2.155354191290933,
+      "strikes": 0,
+      "passes": 2,
+      "discovery_ic_t": 6.8718466425738995
+    },
+    {
+      "name": "pv_corr_20d",
+      "family": "",
+      "source": "hypothesis",
+      "was": "probation",
+      "now": "probation",
+      "recheck_t": 1.0397898176492486,
+      "strikes": 0,
+      "passes": 0,
+      "discovery_ic_t": 6.534228476170513
+    },
+    {
+      "name": "gp_0190",
+      "family": "",
+      "source": "gp",
+      "was": "probation",
+      "now": "probation",
+      "recheck_t": 1.4331695723941762,
+      "strikes": 0,
+      "passes": 0,
+      "discovery_ic_t": 6.246044311145327
+    },
+    {
+      "name": "gp_0161",
+      "family": "",
+      "source": "gp",
+      "was": "probation",
+      "now": "active",
+      "recheck_t": 2.2489611488882457,
+      "strikes": 0,
+      "passes": 2,
+      "discovery_ic_t": 5.586900728938371
+    },
+    {
+      "name": "rnd_085",
+      "family": "",
+      "source": "random",
+      "was": "probation",
+      "now": "active",
+      "recheck_t": 3.81433483574151,
+      "strikes": 0,
+      "passes": 2,
+      "discovery_ic_t": 5.556607747650007
+    },
+    {
+      "name": "rnd_022",
+      "family": "",
+      "source": "random",
+      "was": "probation",
+      "now": "probation",
+      "recheck_t": 1.2523998940914858,
+      "strikes": 0,
+      "passes": 0,
+      "discovery_ic_t": 5.544840540958717
+    },
+    {
+      "name": "rnd_065",
+      "family": "",
+      "source": "random",
+      "was": "probation",
+      "now": "active",
+      "recheck_t": 3.825444009923321,
+      "strikes": 0,
+      "passes": 2,
+      "discovery_ic_t": 5.197294052832186
+    },
+    {
+      "name": "gp_0147",
+      "family": "",
+      "source": "gp",
+      "was": "probation",
+      "now": "probation",
+      "recheck_t": 1.722314969623591,
+      "strikes": 0,
+      "passes": 0,
+      "discovery_ic_t": 5.180075995971384
+    },
+    {
+      "name": "gp_0195",
+      "family": "",
+      "source": "gp",
+      "was": "probation",
+      "now": "active",
+      "recheck_t": 4.7824081085451375,
+      "strikes": 0,
+      "passes": 2,
+      "discovery_ic_t": 5.157862057336409
+    },
+    {
+      "name": "gp_0172",
+      "family": "",
+      "source": "gp",
+      "was": "probation",
+      "now": "probation",
+      "recheck_t": 1.026913327960165,
+      "strikes": 0,
+      "passes": 0,
+      "discovery_ic_t": 4.134384518131308
+    },
+    {
+      "name": "rnd_025",
+      "family": "",
+      "source": "random",
+      "was": "probation",
+      "now": "retired",
+      "recheck_t": -0.1614055239558934,
+      "strikes": 2,
+      "passes": 0,
+      "discovery_ic_t": 3.6048685536561598
+    },
+    {
+      "name": "rev_20d",
+      "family": "",
+      "source": "hypothesis",
+      "was": "probation",
+      "now": "retired",
+      "recheck_t": 0.7846454207870528,
+      "strikes": 2,
+      "passes": 0,
+      "discovery_ic_t": 3.3008372776651793
+    },
+    {
+      "name": "rnd_101",
+      "family": "",
+      "source": "random",
+      "was": "probation",
+      "now": "retired",
+      "recheck_t": -0.4674955846454582,
+      "strikes": 2,
+      "passes": 0,
+      "discovery_ic_t": 3.2154595338208285
+    },
+    {
+      "name": "mom_12_1",
+      "family": "",
+      "source": "hypothesis",
+      "was": "probation",
+      "now": "probation",
+      "recheck_t": 1.9920140338901264,
+      "strikes": 0,
+      "passes": 0,
+      "discovery_ic_t": 3.2082241956595885
+    },
+    {
+      "name": "gp_0134",
+      "family": "",
+      "source": "gp",
+      "was": "probation",
+      "now": "retired",
+      "recheck_t": 0.7490291741315086,
+      "strikes": 2,
+      "passes": 0,
+      "discovery_ic_t": 3.1724486458791725
+    },
+    {
+      "name": "vwap_gap",
+      "family": "",
+      "source": "hypothesis",
+      "was": "probation",
+      "now": "retired",
+      "recheck_t": 0.4004342007626837,
+      "strikes": 2,
+      "passes": 0,
+      "discovery_ic_t": 3.095607067616792
+    },
+    {
+      "name": "gp_0242",
+      "family": "",
+      "source": "gp",
+      "was": "probation",
+      "now": "retired",
+      "recheck_t": -0.47279954976610306,
+      "strikes": 2,
+      "passes": 0,
+      "discovery_ic_t": 3.082870463004747
+    },
+    {
+      "name": "gp_0179",
+      "family": "",
+      "source": "gp",
+      "was": "probation",
+      "now": "retired",
+      "recheck_t": -0.900110030003462,
+      "strikes": 2,
+      "passes": 0,
+      "discovery_ic_t": 3.0428204621592374
+    }
+  ]
+}

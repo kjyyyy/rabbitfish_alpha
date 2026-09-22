@@ -1,0 +1,22 @@
+{% macro tools(selector) %}
+<div class="tools">
+  <input type="search" data-filter="{{ selector }}" placeholder="filter rows…">
+  <span class="sub" data-count></span>
+  <span class="sub">click a column to sort</span>
+</div>
+{% endmacro %}
+
+{% macro statuspill(s) %}
+{% if s in ('active', 'passed', 'forward-evidenced') %}<span class="pill ok">{{ s }}</span>
+{% elif s in ('probation',) %}<span class="pill warn">{{ s }}</span>
+{% elif s in ('rejected', 'retired') %}<span class="pill bad">{{ s }}</span>
+{% else %}<span class="pill">{{ s or '-' }}</span>{% endif %}
+{% endmacro %}
+
+{% macro bar(v, of) %}
+<div class="bar" title="{{ v }} of {{ of }}"><i style="width: {{ v|width(of) }}%"></i></div>
+{% endmacro %}
+
+{% macro empty(what, how) %}
+<div class="empty"><strong>Nothing to show yet.</strong> {{ what }}<br><br>Run: <code>{{ how }}</code></div>
+{% endmacro %}

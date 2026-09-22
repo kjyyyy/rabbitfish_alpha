@@ -1,0 +1,175 @@
+{
+  "n_candidates": 132,
+  "n_evaluated": 191,
+  "n_trials_total": 385,
+  "naive_t2": 103,
+  "t3": 59,
+  "active": [],
+  "probation": [
+    "mom_12_1",
+    "rev_5d",
+    "vwap_gap",
+    "rnd_021",
+    "rnd_025",
+    "rnd_065",
+    "gp_0138",
+    "gp_0140",
+    "gp_0149",
+    "gp_0150",
+    "gp_0161",
+    "gp_0186",
+    "gp_0205",
+    "gp_0228",
+    "gp_0233",
+    "gp_0245"
+  ],
+  "pbo": 0.08866666666666667,
+  "best_dsr": 0.9210201148102803,
+  "decay_top20": {
+    "discovery_ic": 0.03412947588169166,
+    "later_ic": 0.01377027715236252
+  },
+  "ic_corr_discovery_vs_later": 0.3539868638717168,
+  "ablation_by_source": {
+    "hypothesis": {
+      "evaluated": 11,
+      "t_ge_3": 7,
+      "probation": 3,
+      "active": 0,
+      "mean_disc_ic_of_t3": 0.030933222841494374,
+      "mean_later_ic_of_t3": 0.02109078861365907
+    },
+    "llm": {
+      "evaluated": 0,
+      "t_ge_3": 0,
+      "probation": 0,
+      "active": 0,
+      "mean_disc_ic_of_t3": null,
+      "mean_later_ic_of_t3": null
+    },
+    "random": {
+      "evaluated": 77,
+      "t_ge_3": 10,
+      "probation": 3,
+      "active": 0,
+      "mean_disc_ic_of_t3": 0.02844020907818154,
+      "mean_later_ic_of_t3": 0.00687406965148607
+    },
+    "gp": {
+      "evaluated": 103,
+      "t_ge_3": 42,
+      "probation": 10,
+      "active": 0,
+      "mean_disc_ic_of_t3": 0.027818416898534298,
+      "mean_later_ic_of_t3": 0.011138173911182702
+    }
+  },
+  "family_diagnostics": {
+    "trend": {
+      "evaluated": 8,
+      "t_ge_3": 1,
+      "kept": 1,
+      "mean_ic": 0.010491987000320474,
+      "mean_later_ic_of_t3": 0.027204296938560895
+    },
+    "reversal": {
+      "evaluated": 16,
+      "t_ge_3": 8,
+      "kept": 2,
+      "mean_ic": 0.023402712847865402,
+      "mean_later_ic_of_t3": 0.009489028831518965
+    },
+    "volatility": {
+      "evaluated": 38,
+      "t_ge_3": 6,
+      "kept": 2,
+      "mean_ic": 0.014830888685482508,
+      "mean_later_ic_of_t3": 0.026027527483336158
+    },
+    "range": {
+      "evaluated": 52,
+      "t_ge_3": 11,
+      "kept": 4,
+      "mean_ic": 0.013263887303693468,
+      "mean_later_ic_of_t3": 0.008109790630303369
+    },
+    "price_volume": {
+      "evaluated": 40,
+      "t_ge_3": 25,
+      "kept": 4,
+      "mean_ic": 0.02226277525680053,
+      "mean_later_ic_of_t3": 0.008058799264368342
+    },
+    "liquidity": {
+      "evaluated": 26,
+      "t_ge_3": 7,
+      "kept": 2,
+      "mean_ic": 0.013064026081898801,
+      "mean_later_ic_of_t3": 0.02026852467377995
+    },
+    "other": {
+      "evaluated": 11,
+      "t_ge_3": 1,
+      "kept": 1,
+      "mean_ic": 0.011722958968366915,
+      "mean_later_ic_of_t3": -0.007659522669587159
+    }
+  },
+  "hurdle_sharpe_ann": 1.7806031407672263,
+  "trial_budget": 0,
+  "bandit_hit_rates": {
+    "trend": 0.25,
+    "reversal": 0.22727272727272727,
+    "volatility": 0.3076923076923077,
+    "range": 0.40476190476190477,
+    "price_volume": 0.6851851851851852,
+    "liquidity": 0.7586206896551724,
+    "other": 0.0
+  },
+  "bandit_reward_vs_in_sample": {
+    "trend": {
+      "trials": 12,
+      "reward_rate": 0.25,
+      "in_sample_rate": 0.0,
+      "gap": -0.25
+    },
+    "reversal": {
+      "trials": 22,
+      "reward_rate": 0.22727272727272727,
+      "in_sample_rate": 0.2727272727272727,
+      "gap": 0.04545454545454544
+    },
+    "volatility": {
+      "trials": 26,
+      "reward_rate": 0.3076923076923077,
+      "in_sample_rate": 0.15384615384615385,
+      "gap": -0.15384615384615385
+    },
+    "range": {
+      "trials": 42,
+      "reward_rate": 0.40476190476190477,
+      "in_sample_rate": 0.19047619047619047,
+      "gap": -0.2142857142857143
+    },
+    "price_volume": {
+      "trials": 54,
+      "reward_rate": 0.6851851851851852,
+      "in_sample_rate": 0.3333333333333333,
+      "gap": -0.3518518518518519
+    },
+    "liquidity": {
+      "trials": 29,
+      "reward_rate": 0.7586206896551724,
+      "in_sample_rate": 0.20689655172413793,
+      "gap": -0.5517241379310345
+    },
+    "other": {
+      "trials": 19,
+      "reward_rate": 0.0,
+      "in_sample_rate": 0.0,
+      "gap": 0.0
+    }
+  },
+  "rejected_by_leakage": 0,
+  "rejected_by_numerical": 10
+}

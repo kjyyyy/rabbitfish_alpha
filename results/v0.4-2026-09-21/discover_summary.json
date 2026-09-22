@@ -1,0 +1,131 @@
+{
+  "n_candidates": 132,
+  "n_evaluated": 194,
+  "n_trials_total": 194,
+  "naive_t2": 100,
+  "t3": 52,
+  "active": [],
+  "probation": [
+    "mom_12_1",
+    "rev_20d",
+    "pv_corr_20d",
+    "vwap_gap",
+    "rnd_022",
+    "rnd_025",
+    "rnd_065",
+    "rnd_085",
+    "rnd_101",
+    "gp_0134",
+    "gp_0147",
+    "gp_0161",
+    "gp_0172",
+    "gp_0179",
+    "gp_0190",
+    "gp_0195",
+    "gp_0201",
+    "gp_0242"
+  ],
+  "pbo": 0.04,
+  "best_dsr": 0.9030351609147088,
+  "decay_top20": {
+    "discovery_ic": 0.03729490051130844,
+    "later_ic": 0.017096686171510903
+  },
+  "ic_corr_discovery_vs_later": 0.3097675785918468,
+  "ablation_by_source": {
+    "hypothesis": {
+      "evaluated": 11,
+      "t_ge_3": 7,
+      "probation": 4,
+      "active": 0,
+      "mean_disc_ic_of_t3": 0.030933222841494374,
+      "mean_later_ic_of_t3": 0.02109078861365907
+    },
+    "llm": {
+      "evaluated": 0,
+      "t_ge_3": 0,
+      "probation": 0,
+      "active": 0,
+      "mean_disc_ic_of_t3": null,
+      "mean_later_ic_of_t3": null
+    },
+    "random": {
+      "evaluated": 82,
+      "t_ge_3": 13,
+      "probation": 5,
+      "active": 0,
+      "mean_disc_ic_of_t3": 0.027760240403375783,
+      "mean_later_ic_of_t3": 0.009112750386971851
+    },
+    "gp": {
+      "evaluated": 101,
+      "t_ge_3": 32,
+      "probation": 9,
+      "active": 0,
+      "mean_disc_ic_of_t3": 0.029454921033160365,
+      "mean_later_ic_of_t3": 0.009582488513286327
+    }
+  },
+  "family_diagnostics": {
+    "trend": {
+      "evaluated": 10,
+      "t_ge_3": 2,
+      "kept": 1,
+      "mean_ic": 0.012673728405093643,
+      "mean_later_ic_of_t3": 0.025108124359894485
+    },
+    "reversal": {
+      "evaluated": 18,
+      "t_ge_3": 6,
+      "kept": 3,
+      "mean_ic": 0.0148846484939067,
+      "mean_later_ic_of_t3": 0.007145807399417676
+    },
+    "volatility": {
+      "evaluated": 38,
+      "t_ge_3": 5,
+      "kept": 2,
+      "mean_ic": 0.013083277421779687,
+      "mean_later_ic_of_t3": -0.00135621689900342
+    },
+    "range": {
+      "evaluated": 56,
+      "t_ge_3": 10,
+      "kept": 4,
+      "mean_ic": 0.013536576930266402,
+      "mean_later_ic_of_t3": 0.01619182848853503
+    },
+    "price_volume": {
+      "evaluated": 40,
+      "t_ge_3": 22,
+      "kept": 4,
+      "mean_ic": 0.02295498778740956,
+      "mean_later_ic_of_t3": 0.011763712426115179
+    },
+    "liquidity": {
+      "evaluated": 16,
+      "t_ge_3": 6,
+      "kept": 3,
+      "mean_ic": 0.016225844872482176,
+      "mean_later_ic_of_t3": 0.012228410589972509
+    },
+    "other": {
+      "evaluated": 16,
+      "t_ge_3": 1,
+      "kept": 1,
+      "mean_ic": 0.011053456282927802,
+      "mean_later_ic_of_t3": -0.007659522669587159
+    }
+  },
+  "bandit_hit_rates": {
+    "trend": 0.14285714285714285,
+    "reversal": 0.36363636363636365,
+    "volatility": 0.23076923076923078,
+    "range": 0.22727272727272727,
+    "price_volume": 0.5555555555555556,
+    "liquidity": 0.4444444444444444,
+    "other": 0.0
+  },
+  "rejected_by_leakage": 0,
+  "rejected_by_numerical": 30
+}

@@ -1,0 +1,84 @@
+name: ci
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      # deliberately unpinned: constraints.txt is compiled on 3.11 for the image,
+      # while the matrix resolves fresh to catch upstream breakage early
+      - run: pip install -e ".[dev,web]"
+      - run: ruff check src tests
+      - run: python -m alembic upgrade head      # migrations must apply on a clean database
+      - name: models and migrations must not drift
+        run: python -m alembic check
+      - run: python -m alembic downgrade base
+      - run: pytest -q
+
+  byod:
+    # The path a new user takes: no 570MB download, their own CSVs, one command.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: pip install -e ".[qlib,dev]"
+      - name: generate a small OHLCV set
+        run: |
+          python - <<'PY'
+          import numpy as np, pandas as pd, pathlib
+          d = pathlib.Path("ci_csv"); d.mkdir(exist_ok=True)
+          rng = np.random.default_rng(0)
+          dates = pd.bdate_range("2020-01-01", "2024-12-31")
+          for s in ("aaa", "bbb", "ccc"):
+              px = 100 * np.exp(np.cumsum(rng.normal(0.0002, 0.015, len(dates))))
+              pd.DataFrame({"date": dates.strftime("%Y-%m-%d"), "open": px, "high": px * 1.01,
+                            "low": px * 0.99, "close": px,
+                            "volume": rng.integers(1e5, 1e6, len(dates))}
+                           ).to_csv(d / f"{s}.csv", index=False)
+          PY
+      - run: alphalab init --stack mock
+      - run: python -m alembic upgrade head
+      - run: alphalab ingest --csv ci_csv --dest data/ci --universe ci -c configs/local_offline.yaml
+      - name: the engine must read what ingest wrote
+        run: |
+          python - <<'PY'
+          import qlib
+          from qlib.data import D
+          qlib.init(provider_uri="data/ci", region="us", kernels=1, logging_level="WARNING")
+          df = D.features(D.instruments("ci"), ["$close", "Mean($close, 5)"],
+                          start_time="2024-12-01", end_time="2024-12-31")
+          assert len(df) > 30 and df["$close"].notna().all(), df
+          print(f"OK: {len(df)} rows from ingested data")
+          PY
+
+  image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: build
+        uses: docker/build-push-action@v6
+        with: {context: ., push: false, load: true, tags: "alphalab:ci"}
+      - name: the entrypoint and migrations work inside the image
+        run: |
+          docker run --rm alphalab:ci --help
+          docker run --rm -e ALPHALAB_AUTO_MIGRATE=1 alphalab:ci db status
+          docker run --rm alphalab:ci doctor --skip-models -c configs/local_offline.yaml || true
+      - run: docker compose config >/dev/null      # every profile must still parse
+
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - uses: pre-commit/action@v3.0.1

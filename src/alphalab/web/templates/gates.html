@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block body %}
+<h2>Every gate, and what it rejects</h2>
+<p class="note">These are the rules a candidate must survive, in the order they apply. The values
+shown are the live ones for config <code>{{ conf.name }}</code> (hash <code>{{ conf.sha }}</code>) —
+this page reads the same config object the pipeline does, so it cannot drift from what is enforced.</p>
+
+{% for stage in ['screen', 'evaluate', 'gate', 'search', 'library', 'claim'] %}
+{% set rows = gates|selectattr('stage', 'equalto', stage)|list %}
+{% if rows %}
+<h2>{{ {'screen': 'Screen — before anything is evaluated',
+        'evaluate': 'Evaluation — before any score is trusted',
+        'gate': 'Gates — what a candidate must clear to enter the library',
+        'search': 'Search — where effort goes (allocates, does not reject)',
+        'library': 'Library lifecycle — promotion and retirement',
+        'claim': 'Claims — what the evidence entitles you to say'}[stage] }}</h2>
+<div class="scroll"><table><thead><tr><th>Gate</th><th>Rule</th><th class="num">Value</th>
+<th>Set in</th><th>What it rejects</th></tr></thead><tbody>
+{% for g in rows %}
+<tr><td><strong>{{ g.name }}</strong></td><td class="reason">{{ g.rule }}</td>
+<td class="num">{{ g.value }}</td><td><code>{{ g.key }}</code></td>
+<td class="reason">{{ g.rejects }}</td></tr>
+{% endfor %}</tbody></table></div>
+{% endif %}
+{% endfor %}
+
+<h2>Why you cannot change these here</h2>
+<p class="note">{{ conf.why }}</p>
+<p class="note">{{ conf.how }} Editing a threshold from a dashboard, after seeing which candidates
+it rejected, is the most efficient way to manufacture a false discovery — so the dashboard has no
+route that can do it, and a test enforces that.</p>
+<p class="note">If a specific run genuinely needs to deviate, record the deviation instead of
+hiding it:<br><code>{{ conf.exception }}</code><br>It is append-only and appears on the validity
+card beside the result it affected.</p>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}{% from "_macros.html" import tools, statuspill, empty %}
+{% block body %}
+<h2>Decay and the retirement queue</h2>
+<p class="note">Every library factor rechecked on data it was <em>not</em> discovered on. Two
+consecutive strong rechecks promote; two weak ones retire. One quiet window neither kills nor
+crowns anything, and the same window can never be counted twice.</p>
+{% if data.factors %}
+<div class="cards">
+  <div class="card"><div class="k">Window</div><div class="v" style="font-size:14px">{{ data.window or '-' }}</div>
+    <div class="h">{{ data.sessions or 0 }} sessions</div></div>
+  <div class="card"><div class="k">Promoted</div><div class="v">{{ data.promoted|length }}</div></div>
+  <div class="card"><div class="k">Retired</div><div class="v">{{ data.retired|length }}</div></div>
+</div>
+{{ tools('#decay') }}
+<div class="scroll"><table id="decay"><thead><tr><th data-sort>Factor</th><th data-sort title="{{ tip('source_col') }}">Source</th>
+<th data-sort title="{{ tip('status') }}">Status</th><th class="num" data-sort title="{{ tip('ic_t') }}">Discovery t</th><th class="num" data-sort title="{{ tip('recheck_t') }}">Recheck t</th>
+<th class="num" data-sort title="{{ tip('retained') }}">Retained</th><th></th><th class="num" data-sort title="{{ tip('strikes') }}">Strikes</th>
+<th class="num" data-sort title="{{ tip('passes') }}">Passes</th></tr></thead><tbody>
+{% for f in data.factors %}
+<tr><td>{{ f.name }}</td><td>{{ f.source }}</td><td>{{ statuspill(f.now or f.status) }}</td>
+<td class="num">{{ f.discovery_ic_t|num(2) }}</td><td class="num">{{ f.recheck_t|num(2) }}</td>
+<td class="num">{{ f.retained|num(2) }}</td>
+<td><div class="bar"><i style="width: {{ f.retained|width(1) }}%"></i></div></td>
+<td class="num">{{ f.strikes }}</td><td class="num">{{ f.passes }}</td></tr>
+{% endfor %}</tbody></table></div>
+{% else %}
+{{ empty('The library has never been rechecked on out-of-period data.', 'alphalab revalidate') }}
+{% endif %}
+{% endblock %}

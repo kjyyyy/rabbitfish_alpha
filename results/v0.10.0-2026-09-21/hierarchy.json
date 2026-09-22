@@ -1,0 +1,89 @@
+{
+  "n_flat_trials": 194,
+  "n_family_trials": 7,
+  "families": {
+    "price_volume": {
+      "members": 40,
+      "ic_mean": 0.055396125358765945,
+      "ic_t": 7.431072173003993,
+      "ls_sharpe_ann": 1.5721256732940674,
+      "dsr_family_level": 0.9989132056497821,
+      "later_ic": 0.013949414129960626,
+      "passes": true
+    },
+    "liquidity": {
+      "members": 16,
+      "ic_mean": 0.034943111800429,
+      "ic_t": 4.692785704140338,
+      "ls_sharpe_ann": 0.7972077131271362,
+      "dsr_family_level": 0.8249792300971264,
+      "later_ic": 0.009771049107529567,
+      "passes": false
+    },
+    "range": {
+      "members": 56,
+      "ic_mean": 0.04642948387811055,
+      "ic_t": 6.609754380783492,
+      "ls_sharpe_ann": 0.8197809457778931,
+      "dsr_family_level": 0.8360614234341983,
+      "later_ic": 0.022128783153885147,
+      "passes": false
+    },
+    "reversal": {
+      "members": 18,
+      "ic_mean": 0.0361913468526438,
+      "ic_t": 4.670964068226365,
+      "ls_sharpe_ann": 0.5477273464202881,
+      "dsr_family_level": 0.5798260135652946,
+      "later_ic": -0.012449687011420622,
+      "passes": false
+    },
+    "volatility": {
+      "members": 38,
+      "ic_mean": 0.03569530260514679,
+      "ic_t": 4.655481684051693,
+      "ls_sharpe_ann": 0.38590529561042786,
+      "dsr_family_level": 0.3939193191668111,
+      "later_ic": 0.014157449028199117,
+      "passes": false
+    },
+    "trend": {
+      "members": 10,
+      "ic_mean": 0.030889308847011437,
+      "ic_t": 4.275479239134443,
+      "ls_sharpe_ann": 0.7568721175193787,
+      "dsr_family_level": 0.791766217802472,
+      "later_ic": 0.020207721473943816,
+      "passes": false
+    },
+    "other": {
+      "members": 16,
+      "ic_mean": 0.029034851436427696,
+      "ic_t": 4.2350573632587025,
+      "ls_sharpe_ann": 0.8683043718338013,
+      "dsr_family_level": 0.8615132194432826,
+      "later_ic": -0.014571061621372464,
+      "passes": false
+    }
+  },
+  "survivors": [
+    "price_volume"
+  ],
+  "best_within_family": {
+    "price_volume": {
+      "name": "gp_0150",
+      "expr": "Corr(Log($volume), $high, 20)",
+      "dsr_within_family": 0.7065667053196105,
+      "dsr_same_factor_flat_N": 0.2877860451985741,
+      "ic_t": 6.37,
+      "n_in_family": 40
+    }
+  },
+  "effective_trials": {
+    "n_raw": 194,
+    "n_eff_eigenvalue": 2.8,
+    "n_eff_avg_corr": 1.8,
+    "mean_abs_corr": 0.485,
+    "note": "raw N is used for gating; effective N is reported only"
+  }
+}

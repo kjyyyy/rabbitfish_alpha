@@ -1,0 +1,19 @@
+{% extends "base.html" %}{% from "_macros.html" import tools, statuspill, empty %}
+{% block body %}
+<h2>Factor library</h2>
+<p class="note">Lifecycle: probation → active → retired. A factor enters on discovery evidence and
+may only leave on evidence gathered afterwards.</p>
+{% if rows %}
+{{ tools('#lib') }}
+<div class="scroll"><table id="lib"><thead><tr><th data-sort>Factor</th><th data-sort title="{{ tip('status') }}">Status</th>
+<th data-sort title="{{ tip('source_col') }}">Source</th><th class="num" data-sort title="{{ tip('ic_t') }}">Discovery t</th><th class="num" data-sort title="{{ tip('dsr') }}">Discovery DSR</th>
+<th class="num" data-sort title="{{ tip('later_ic_mean') }}">Later IC</th><th class="num" data-sort title="{{ tip('recheck_t') }}">Recheck t</th>
+<th class="num" data-sort>Checks</th><th>Expression</th></tr></thead><tbody>
+{% for r in rows %}
+<tr><td>{{ r.name }}</td><td>{{ statuspill(r.status) }}</td><td>{{ r.source }}</td>
+<td class="num">{{ r.discovery_ic_t|num(2) }}</td><td class="num">{{ r.discovery_dsr|num(3) }}</td>
+<td class="num">{{ r.later_ic|num(4) }}</td><td class="num">{{ r.recheck_t|num(2) }}</td>
+<td class="num">{{ r.checks }}</td><td class="expr" title="{{ r.expr }}">{{ r.expr }}</td></tr>
+{% endfor %}</tbody></table></div>
+{% else %}{{ empty('The library is empty.', 'alphalab discover') }}{% endif %}
+{% endblock %}

@@ -1,0 +1,60 @@
+{
+  "n_trials": 200,
+  "n_periods": 520,
+  "split": 260,
+  "n_repetitions": 30,
+  "reference_ic": 0.03,
+  "cases": [
+    {
+      "case": "equity-like cross-section",
+      "instruments": 300,
+      "avg_correlation": 0.135,
+      "bets_long_only": 43.0,
+      "bets_neutral": 190.02,
+      "trials_per_bet": 1.1,
+      "best_sharpe_in_sample": 1.21,
+      "same_factor_out_of_sample": -0.073,
+      "ir_if_ic_is_0_03": 2.982,
+      "ic_needed_for_ir_0_7": 0.007
+    },
+    {
+      "case": "crypto perps",
+      "instruments": 100,
+      "avg_correlation": 0.57,
+      "bets_long_only": 3.01,
+      "bets_neutral": 83.24,
+      "trials_per_bet": 2.4,
+      "best_sharpe_in_sample": 1.097,
+      "same_factor_out_of_sample": 0.139,
+      "ir_if_ic_is_0_03": 1.974,
+      "ic_needed_for_ir_0_7": 0.0106
+    },
+    {
+      "case": "commodity futures",
+      "instruments": 25,
+      "avg_correlation": 0.347,
+      "bets_long_only": 6.38,
+      "bets_neutral": 23.08,
+      "trials_per_bet": 8.7,
+      "best_sharpe_in_sample": 1.105,
+      "same_factor_out_of_sample": -0.024,
+      "ir_if_ic_is_0_03": 1.039,
+      "ic_needed_for_ir_0_7": 0.0202
+    },
+    {
+      "case": "a thin book",
+      "instruments": 8,
+      "avg_correlation": 0.485,
+      "bets_long_only": 3.02,
+      "bets_neutral": 6.95,
+      "trials_per_bet": 28.8,
+      "best_sharpe_in_sample": 0.866,
+      "same_factor_out_of_sample": 0.009,
+      "ir_if_ic_is_0_03": 0.57,
+      "ic_needed_for_ir_0_7": 0.0368
+    }
+  ],
+  "hypothesis_tested": "a narrower universe inflates the in-sample best of a fixed search budget",
+  "hypothesis_supported": false,
+  "conclusion": "Not supported: the best-of-N in-sample Sharpe is roughly constant across universe widths and out-of-sample is roughly zero in all of them. The experiment instead establishes that the breadth penalty depends on the kind of book: a common factor collapses LONG-ONLY breadth (25 futures -> ~6 bets, matching the CTA literature) but cancels for a CROSS-SECTIONAL book (~23 bets). Quoting one at the other misstates breadth by an order of magnitude. The residual penalty is real: an identical IC of 0.03 earns an IR of 2.98 in the wide equity cross-section, 1.04 in commodity futures and 0.57 in a thin book, while the trial count deflating the result is the same in each."
+}

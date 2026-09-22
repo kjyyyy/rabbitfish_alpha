@@ -1,0 +1,15 @@
+# Local models via vLLM (needs an NVIDIA GPU): `make up PROFILE=vllm`.
+# vLLM serves an OpenAI-compatible API, so the same "openai" provider works.
+name: cn_csi300_vllm
+market: {provider_uri: data/cn_data, universe: csi300, benchmark: SH000300,
+         adv_expr: "$amount", adv_scale: 1000.0,
+         costs: {commission: 0.0003, slippage: 0.0010, stamp_sell: 0.0005}}
+splits: {holdout_burned: true, data_end: "2026-09-18"}
+llm:
+  provider: openai
+  model: Qwen/Qwen2.5-7B-Instruct
+  base_url: http://localhost:8000/v1
+  critic_provider: openai
+  critic_model: Qwen/Qwen2.5-7B-Instruct    # swap for a second served model if you have one
+  critic_base_url: http://localhost:8000/v1
+  training_cutoff: "2024-12-31"

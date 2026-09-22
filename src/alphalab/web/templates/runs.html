@@ -1,0 +1,36 @@
+{% extends "base.html" %}{% from "_macros.html" import tools %}
+{% block body %}
+<div class="cards">
+  <div class="card"><div class="k">Runs</div><div class="v">{{ summary.runs }}</div></div>
+  <div class="card"><div class="k">Trials</div><div class="v">{{ summary.trials }}</div></div>
+  <div class="card"><div class="k">Distinct formulas</div><div class="v">{{ summary.distinct_formulas }}</div>
+    <div class="h">the DSR denominator</div></div>
+  <div class="card"><div class="k">Library</div><div class="v">{{ summary.library }}</div></div>
+  <div class="card"><div class="k">Forward signals</div><div class="v">{{ summary.forward_signals }}</div></div>
+  <div class="card"><div class="k">Exceptions</div><div class="v">{{ summary.exceptions }}</div></div>
+</div>
+
+<h2>The bar your own search has raised</h2>
+<p class="note">Every trial raises the Deflated-Sharpe hurdle for every future candidate, whether or
+not anything was learned. This is that hurdle over time — a treadmill, not progress.</p>
+{% if treadmill.points %}
+<div class="scroll"><table><thead><tr><th>When</th><th class="num" title="{{ tip('n_trials_at_eval') }}">Distinct trials</th>
+<th class="num" title="{{ tip('hurdle') }}">Sharpe needed for DSR 0.95</th><th></th></tr></thead><tbody>
+{% for p in treadmill.points[-8:] %}
+<tr><td>{{ p.ts[:10] }}</td><td class="num">{{ p.n }}</td>
+<td class="num">{{ p.hurdle_sharpe_ann }}</td>
+<td><div class="bar"><i style="width: {{ p.hurdle_sharpe_ann|width(5) }}%"></i></div></td></tr>
+{% endfor %}</tbody></table></div>
+{% endif %}
+
+<h2>Runs</h2>
+{{ tools('#runs') }}
+<div class="scroll"><table id="runs"><thead><tr>
+<th data-sort>Run</th><th data-sort>Config</th><th data-sort title="{{ tip('commit') }}">Version</th><th data-sort title="{{ tip('commit') }}">Commit</th>
+<th data-sort>Started</th><th class="num" data-sort title="{{ tip('n_trials_at_eval') }}">Trials</th></tr></thead><tbody>
+{% for r in runs %}
+<tr><td><a href="/runs/{{ r.run_id }}">{{ r.run_id }}</a></td><td>{{ r.config }}</td>
+<td>{{ r.version or '-' }}</td><td><code>{{ (r.git_sha or '-')[:8] }}</code></td>
+<td>{{ r.started[:19].replace('T', ' ') }}</td><td class="num">{{ r.trials }}</td></tr>
+{% endfor %}</tbody></table></div>
+{% endblock %}
