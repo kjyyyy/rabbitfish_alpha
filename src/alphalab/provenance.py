@@ -8,7 +8,8 @@ beat v0.4?" unanswerable except by reading committed markdown by hand.
 from __future__ import annotations
 
 import subprocess
-from importlib.metadata import PackageNotFoundError, version as pkg_version
+from importlib.metadata import PackageNotFoundError
+from importlib.metadata import version as pkg_version
 from pathlib import Path
 
 
